@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">appBluetooth</string>
+    <string name="btnBuscarDevice">Procurar Dispositivos</string>
+</resources>
