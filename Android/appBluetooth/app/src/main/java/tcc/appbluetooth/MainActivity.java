@@ -18,8 +18,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         Button btnBuscarDevice = (Button) findViewById(R.id.btnBuscarDevice);
         btnBuscarDevice.setOnClickListener(this);
     }
@@ -28,26 +26,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnBuscarDevice: {
-                //se o bluetooth nao estiver ligado, solicita ao usuario que ligue
-                if (!conexaoBlueooth.conecta()) {
-                    Intent habilitaBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(habilitaBluetooth, REQUEST_ENABLE_BT);
-                } else {
+                String status;
 
-                    BluetoothAdapter adaptador = BluetoothAdapter.getDefaultAdapter();
-
-                    String status;
-                    if (adaptador.isEnabled()) {
-                        String mydeviceaddress = "";//adaptador.getAddress();
-                        String mydevicename = adaptador.getName();
-                        status = mydevicename + " : " + mydeviceaddress;
-                    }
-                    else
-                    {
-                        status = "Bluetooth is not Enabled.";
-                    }
-
+                //verifica se existe bluetooth no dispositivo
+                if (conexaoBluetooth.adaptador() == null) {
+                    //caso não tenha bluetooth, mostra uma mensagem para o usuário e fecha a aplicação
+                    status = "Esse dispositivo não suporta Bluetooth";
                     Toast.makeText(this, status, Toast.LENGTH_LONG).show();
+                    finish();
+                } else {
+                    //se estiver ligado, cria uma objeto do adaptador blueooth
+                    BluetoothAdapter adaptador = BluetoothAdapter.getDefaultAdapter();
+                    //verifica se o Blueooth está ligado
+                    if (!adaptador.isEnabled()) {
+                        //se o bluetooth nao estiver ligado, solicita ao usuario que ligue
+                        Intent habilitaBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(habilitaBluetooth, REQUEST_ENABLE_BT);
+                    }
+                    else {
+                        startActivity(new Intent(this, ListarDispositivosActivity.class));
+                    }
                 }
                 break;
             }
