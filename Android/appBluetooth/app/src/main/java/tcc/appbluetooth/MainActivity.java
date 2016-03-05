@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //se o bluetooth nao estiver ligado, solicita ao usuario que ligue
                         Intent habilitaBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(habilitaBluetooth, REQUEST_ENABLE_BT);
-                    }
-                    else {
+                    } else {
                         startActivity(new Intent(this, ListarDispositivosActivity.class));
                     }
                 }
