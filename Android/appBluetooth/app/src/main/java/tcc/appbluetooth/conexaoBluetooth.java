@@ -4,51 +4,59 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Message;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public class conexaoBluetooth {
-
+    /**
+     * Verifica o adaptador bluetooth padrão do dispositivo
+     * @return adaptador padrão
+     */
     public static BluetoothAdapter adaptador() {
         return BluetoothAdapter.getDefaultAdapter();
     }
 
-    public static void conectaComDevice(BluetoothDevice device) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        BluetoothSocket mmSocket;
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        UUID MY_UUID = UUID.fromString("04c6032b-0000-4000-8000-00805f9b34fc");
+    /**
+     * Abre um socket de conexão com o dispositivo Bluetooth
+     * @param device
+     * @return Retorna true se o dispositivo foi conectado ou false caso apresente alguma falha
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    public static boolean conectaComDevice(BluetoothDevice device) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        BluetoothSocket     mmSocket, tmpSocket = null;
+        BluetoothAdapter    mBluetoothAdapter   = adaptador();
+        UUID                MY_UUID             = UUID.fromString("04c6032b-0000-4000-8000-00805f9b34fc");
 
-        BluetoothSocket tmpSocket = null;
+        // Monta um socket para conectar ao dispositivo
+        mmSocket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(device, 1);
 
-        // Get a BluetoothSocket to connect with the given BluetoothDevice
-        try {
-            tmpSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
-        } catch (IOException e) {
-            Message msgException = new Message();
-            msgException.sendToTarget();
-        }
-        //mmSocket = tmpSocket;
-        mmSocket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
-
+        // Antes de se conectar, cancela a busca de dispositivos caso esteja em andamento
         mBluetoothAdapter.cancelDiscovery();
 
         try {
-            // Connect the device through the socket. This will block
-            // until it succeeds or throws an exception
+            //verifica se há alguma conexão ativa e fecha-a
+            if (mmSocket.isConnected()){
+                mmSocket.close();
+            }
+
+            //Faz a conexão com o dispositivo através do socket
             mmSocket.connect();
-            System.out.println("Conectou com " + device.getName());
+            return true;
 
         } catch (IOException connectException) {
-            // Unable to connect; close the socket and get out
-            System.out.println("Falha na conexão");
-
+            // Se lançar uma excessão, tenta fechar o socket
+            System.out.println(connectException.toString());
             try {
                 mmSocket.close();
-            } catch (IOException closeException) {
+            } catch (IOException e) {
+                System.out.println(e.toString());
             }
-            return;
+            return false;
         }
     }
 }

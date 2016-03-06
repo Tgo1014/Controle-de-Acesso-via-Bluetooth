@@ -10,8 +10,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //variavel para solicitar a ativacao, caso o bluetooth esteja desativado
+    //variável para solicitar a ativacao, caso o bluetooth esteja desativado
     private final static int REQUEST_ENABLE_BT = 1;
+    String status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnBuscarDevice: {
-                String status;
 
                 //verifica se existe bluetooth no dispositivo
                 if (conexaoBluetooth.adaptador() == null) {
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     finish();
                 } else {
                     //se estiver ligado, cria uma objeto do adaptador blueooth
-                    BluetoothAdapter adaptador = BluetoothAdapter.getDefaultAdapter();
+                    BluetoothAdapter adaptador = conexaoBluetooth.adaptador();
                     //verifica se o Blueooth está ligado
                     if (!adaptador.isEnabled()) {
                         //se o bluetooth nao estiver ligado, solicita ao usuario que ligue
