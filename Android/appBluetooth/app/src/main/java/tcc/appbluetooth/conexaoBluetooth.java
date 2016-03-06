@@ -3,14 +3,13 @@ package tcc.appbluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Message;
-import android.widget.Toast;
+import android.util.Log;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
-public class conexaoBluetooth {
+public class ConexaoBluetooth {
     /**
      * Verifica o adaptador bluetooth padrão do dispositivo
      * @return adaptador padrão
@@ -50,11 +49,12 @@ public class conexaoBluetooth {
 
         } catch (IOException connectException) {
             // Se lançar uma excessão, tenta fechar o socket
-            System.out.println(connectException.toString());
+            System.out.println(connectException.getMessage().toString());
+            Log.e("app", "Erro no client: " + connectException.getMessage(), connectException);
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                System.out.println(e.toString());
+                System.out.println(e.getMessage().toString());
             }
             return false;
         }

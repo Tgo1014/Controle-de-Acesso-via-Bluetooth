@@ -3,7 +3,6 @@ package tcc.appbluetooth;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +25,6 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
     BluetoothAdapter adaptador;
     ProgressDialog caixinha;
     Integer count = 0;
-    BluetoothSocket btSocket = null;
 
     // Receiver de broadcasts blueooth
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -59,7 +56,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
 
             } else if (acao == BluetoothAdapter.ACTION_DISCOVERY_STARTED) {
                 // Busca iniciada
-                    Toast.makeText(context, "Busca iniciada.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Busca iniciada.", Toast.LENGTH_SHORT).show();
             } else if (acao == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
                 // Busca Finalizada
                 if (listaDeDevices == null || listaDeDevices.size() == 0) {
@@ -84,7 +81,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
         setContentView(R.layout.activity_listar_dispositivos);
 
         listViewDevices = (ListView) findViewById(R.id.listViewDispositivos);
-        adaptador = conexaoBluetooth.adaptador();
+        adaptador = ConexaoBluetooth.adaptador();
 
         if (adaptador != null) {
             listaDeDevices = new ArrayList<BluetoothDevice>(adaptador.getBondedDevices());
@@ -138,19 +135,10 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
         // Recupera o device selecionado
         BluetoothDevice deviceSelecionado = listaDeDevices.get(i);
 
-        try {
-            if (conexaoBluetooth.conectaComDevice(deviceSelecionado)) {
-                Toast.makeText(this, "Conectou com " + deviceSelecionado.getName(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Falha ao conectar com " + deviceSelecionado.getName(), Toast.LENGTH_SHORT).show();
-            }
+        adaptador.cancelDiscovery();
 
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(this, AutenticaActivity.class);
+        intent.putExtra(BluetoothDevice.EXTRA_DEVICE, deviceSelecionado);
+        startActivity(intent);
     }
 }

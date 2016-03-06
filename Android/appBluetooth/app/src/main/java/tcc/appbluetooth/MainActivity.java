@@ -25,18 +25,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void onClick(View v) {
+        BluetoothAdapter adaptador = ConexaoBluetooth.adaptador();
+
         switch (v.getId()) {
             case R.id.btnBuscarDevice: {
 
                 //verifica se existe bluetooth no dispositivo
-                if (conexaoBluetooth.adaptador() == null) {
+                if (adaptador == null) {
                     //caso não tenha bluetooth, mostra uma mensagem para o usuário e fecha a aplicação
                     status = "Esse dispositivo não suporta Bluetooth";
                     Toast.makeText(this, status, Toast.LENGTH_LONG).show();
                     finish();
                 } else {
-                    //se estiver ligado, cria uma objeto do adaptador blueooth
-                    BluetoothAdapter adaptador = conexaoBluetooth.adaptador();
                     //verifica se o Blueooth está ligado
                     if (!adaptador.isEnabled()) {
                         //se o bluetooth nao estiver ligado, solicita ao usuario que ligue
