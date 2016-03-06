@@ -2,11 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tcc.appbluetooth">
 
-    <!-- Solicita a permissao de conexaoBluetooth para ser utilizada no aplicativo -->
+    <!-- Solicita a permissao de ConexaoBluetooth para ser utilizada no aplicativo -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <!--Permissão para localizar devices no Marshmellow -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- Permissão para localizar devices no Marshmellow -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Permissão para pegar o IMEI -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -21,8 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ListarDispositivosActivity" android:label="Lista Devices" android:parentActivityName=".MainActivity" ></activity>
-
+        <activity
+            android:name=".ListarDispositivosActivity"
+            android:label="Lista Devices"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".AutenticaActivity"></activity>
     </application>
 
 </manifest>
