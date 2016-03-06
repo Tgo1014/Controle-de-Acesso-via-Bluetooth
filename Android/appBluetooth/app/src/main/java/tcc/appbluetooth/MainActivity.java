@@ -1,11 +1,18 @@
 package tcc.appbluetooth;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -19,8 +26,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView txtID = (TextView) findViewById(R.id.txtID);
         Button btnBuscarDevice = (Button) findViewById(R.id.btnBuscarDevice);
         btnBuscarDevice.setOnClickListener(this);
+
+        //pega o IMEI do telefone ou em caso de aparelho que não tem IMEI (Tablets) pega o ANDROID_ID
+        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        if (tm != null) {
+            txtID.setText("IMEI: " + tm.getDeviceId());
+        }
+        if (tm.getDeviceId() == null) {
+            txtID.setText("ANDROID_ID: " + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        }
     }
 
 

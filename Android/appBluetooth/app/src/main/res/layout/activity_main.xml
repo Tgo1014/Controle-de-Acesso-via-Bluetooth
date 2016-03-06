@@ -17,4 +17,10 @@
         android:text="@string/btnBuscarDevice"
         android:id="@+id/btnBuscarDevice"
         android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtID"
+        android:text="ID" />
 </LinearLayout>
