@@ -14,7 +14,6 @@ import java.util.UUID;
 
 public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener {
 
-    //UUID uuid = UUID.fromString("04c6032b-0000-4000-8000-00805f9b34fc");
     UUID uuid = UUID.fromString("04c6093b-0000-1000-8000-00805f9b34fb");
     BluetoothDevice       device;
     ControladorIO         controlador;
@@ -35,20 +34,14 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
 
         // Device selecionado na lista
         try {
-            Toast.makeText(this,"Entrou try", Toast.LENGTH_LONG).show();
+
             // Faz a conexão se abriu no modo chat cliente
             if(device != null) {
-                caixinha = ProgressDialog.show(this, "Autenticando", "Aguarde enquanto autenticamos seus dados", false, true);
-                // Faz a conexão utilizando o mesmo UUID que o servidor utilizou
-                //BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuid);
-                //socket.connect();
+                caixinha = ProgressDialog.show(this, "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
 
-
-
-                Toast.makeText(this,"Conectou", Toast.LENGTH_LONG).show();
-                // Inicia o controlador chat
+                // Inicia o controladorIO
                 try {
-                    controlador = new ControladorIO( ConexaoBluetooth.conectaComDevice(device), this);
+                    controlador = new ControladorIO(ConexaoBluetooth.conectaComDevice(device), this);
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
@@ -56,7 +49,12 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
+
                 controlador.iniciar();
+
+                if (caixinha.isShowing()) {
+                    caixinha.dismiss();
+                }
             }
         } catch (IOException e) {
             if (caixinha.isShowing()) {

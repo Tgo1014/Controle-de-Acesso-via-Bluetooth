@@ -23,17 +23,16 @@ public class ConexaoBluetooth {
      * Abre um socket de conexão com o dispositivo Bluetooth
      *
      * @param device
-     * @return Retorna true se o dispositivo foi conectado ou false caso apresente alguma falha
+     * @return Retorna o socket conectado
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
     public static BluetoothSocket conectaComDevice(BluetoothDevice device) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        BluetoothSocket mmSocket, tmpSocket = null;
+        BluetoothSocket mmSocket;
         BluetoothAdapter mBluetoothAdapter = adaptador();
-        //UUID MY_UUID = UUID.fromString("04c6032b-0000-4000-8000-00805f9b34fc");
-        UUID MY_UUID = UUID.fromString("04c6093b-0000-1000-8000-00805f9b34fb");
 
+        UUID MY_UUID = UUID.fromString("04c6093b-0000-1000-8000-00805f9b34fb");
 
         // Monta um socket para conectar ao dispositivo
         mmSocket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(device, 1);
@@ -46,7 +45,6 @@ public class ConexaoBluetooth {
             if (mmSocket.isConnected()) {
                 mmSocket.close();
             }
-
             //Faz a conexão com o dispositivo através do socket
             mmSocket.connect();
             return mmSocket;

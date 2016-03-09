@@ -17,11 +17,6 @@ public class ControladorIO {
     private ChatListener        listener;
     private boolean             running;
 
-
-    public interface ChatListener {
-        public void onMessageReceived(String msg);
-    }
-
     //construtor
     public ControladorIO(BluetoothSocket socket, ChatListener listener) throws IOException {
         this.socket = socket;
@@ -55,12 +50,15 @@ public class ControladorIO {
         }.start();
     }
 
+    public interface ChatListener {
+        public void onMessageReceived(String msg);
+    }
+
     public void sendMessage(String msg) throws IOException {
         if (out != null) {
             out.write(msg.getBytes());
         }
     }
-
 
     public void parar() {
         running = false;
