@@ -24,7 +24,8 @@ public class ProcessConnectionThread implements Runnable {
 
             // prepare to receive data
             InputStream inputStream = mConnection.openInputStream();
-
+            
+            System.out.println("Conexão estabelecida!");
             System.out.println("Aguardando input...");
 
             while (true) {
