@@ -25,55 +25,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
     BluetoothAdapter adaptador;
     ProgressDialog caixinha;
     Integer count = 0;
-
-    // Receiver de broadcasts blueooth
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String acao = intent.getAction();
-
-            // Broadcast de dispositivo encontrado
-            if (acao == BluetoothDevice.ACTION_FOUND) {
-
-                // Recupera o device da intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                // Insere na lista os devices que ainda já são conhecidos (pareaados)
-                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    listaDeDevices.add(device);
-                    Toast.makeText(context, "Encontrou: " + device.getName() + ":" + device.getAddress(), Toast.LENGTH_SHORT).show();
-                    count++;
-                }
-
-                updateLista();
-
-                if (caixinha.isShowing()) {
-                    caixinha.dismiss();
-                }
-
-                Toast.makeText(context, "Busca em andamento...", Toast.LENGTH_LONG).show();
-
-            } else if (acao == BluetoothAdapter.ACTION_DISCOVERY_STARTED) {
-                // Busca iniciada
-                //Toast.makeText(context, "Busca iniciada.", Toast.LENGTH_SHORT).show();
-            } else if (acao == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
-                // Busca Finalizada
-                if (listaDeDevices == null || listaDeDevices.size() == 0) {
-                    if (caixinha.isShowing()) {
-                        caixinha.dismiss();
-                    }
-                    Toast.makeText(context, "Nenhum dispositivo encontrado", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(context, "Busca finalizada", Toast.LENGTH_SHORT).show();
-                    if (count > 1)
-                        Toast.makeText(context, count + " novos dispositivos encontrados", Toast.LENGTH_LONG).show();
-                    else
-                        Toast.makeText(context, count + " novo dispositivo encontrado", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    };
+    List<String> dispositivos;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +34,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
 
         listViewDevices = (ListView) findViewById(R.id.listViewDispositivos);
         adaptador = ConexaoBluetooth.adaptador();
+        dispositivos = new ArrayList<String>();
 
         if (adaptador != null) {
             listaDeDevices = new ArrayList<BluetoothDevice>(adaptador.getBondedDevices());
@@ -106,7 +59,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Quando a activity for destruida, cancela as busacs que estiverem em execução
+        // Quando a activity for destruida, cancela as buscas que estiverem em execução
         if (adaptador != null) {
             adaptador.cancelDiscovery();
             // Cancela receiver
@@ -114,8 +67,54 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
         }
     }
 
+    // Receiver de broadcasts blueooth
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String acao = intent.getAction();
+
+            // Broadcast de dispositivo encontrado
+            if (acao == BluetoothDevice.ACTION_FOUND) {
+
+                // Recupera o device da intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                // Insere na lista os devices que ainda já são conhecidos (pareaados)
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    listaDeDevices.add(device);
+                    Toast.makeText(context, "Encontrou: " + device.getName() + ":" + device.getAddress(), Toast.LENGTH_SHORT).show();
+                    count++;
+                }
+
+                Toast.makeText(context, "Busca em andamento...", Toast.LENGTH_LONG).show();
+
+            } else if (acao == BluetoothAdapter.ACTION_DISCOVERY_STARTED) {
+                // Busca iniciada
+                //Toast.makeText(context, "Busca iniciada.", Toast.LENGTH_SHORT).show();
+            } else if (acao == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
+                // Busca Finalizada
+                if (listaDeDevices == null || listaDeDevices.size() == 0) {
+                    if (caixinha.isShowing()) {
+                        caixinha.dismiss();
+                    }
+                    Toast.makeText(context, "Nenhum dispositivo encontrado", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, "Busca finalizada", Toast.LENGTH_SHORT).show();
+                    updateLista();
+                    if (caixinha.isShowing()) {
+                        caixinha.dismiss();
+                    }
+                    if (count > 1)
+                        Toast.makeText(context, count + " novos dispositivos encontrados", Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(context, count + " novo dispositivo encontrado", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    };
+
     private void updateLista() {
-        List<String> dispositivos = new ArrayList<>();
 
         for (BluetoothDevice dispositivo : listaDeDevices) {
             //Adicionar uma marcação caso o dispositivo já seja conhecido (pareado)

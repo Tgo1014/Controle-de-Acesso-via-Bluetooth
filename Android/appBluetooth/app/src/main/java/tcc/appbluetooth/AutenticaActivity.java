@@ -9,11 +9,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener {
 
-    UUID uuid = UUID.fromString("04c6032b-0000-4000-8000-00805f9b34fc");
+    UUID uuid = UUID.fromString("04c6093b-0000-1000-8000-00805f9b34fb");
     BluetoothDevice       device;
     ControladorIO         controlador;
     ProgressDialog        caixinha;
@@ -22,7 +23,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autentica);
-        TextView xtMensagem = (TextView) findViewById(R.id.txtMensagem);
+        TextView txtMensagem = (TextView) findViewById(R.id.txtMensagem);
 
         //recebe o device passado pela ListDispositivoActivity
         device = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -33,18 +34,28 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
 
         // Device selecionado na lista
         try {
-            Toast.makeText(this,"Entrou try", Toast.LENGTH_LONG).show();
+
             // Faz a conexão se abriu no modo chat cliente
             if(device != null) {
-                caixinha = ProgressDialog.show(this, "Autenticando", "Aguarde enquanto autenticamos seus dados", false, true);
-                // Faz a conexão utilizando o mesmo UUID que o servidor utilizou
-                BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuid);
-                //socket.connect();
-                Toast.makeText(this,"Conectou", Toast.LENGTH_LONG).show();
-                // Inicia o controlador chat
-                controlador = new ControladorIO(socket, this);
+                caixinha = ProgressDialog.show(this, "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
+
+                // Inicia o controladorIO
+                try {
+                    controlador = new ControladorIO(ConexaoBluetooth.conectaComDevice(device), this);
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
                 controlador.iniciar();
-                           }
+
+                if (caixinha.isShowing()) {
+                    caixinha.dismiss();
+                }
+            }
         } catch (IOException e) {
             if (caixinha.isShowing()) {
                 caixinha.dismiss();

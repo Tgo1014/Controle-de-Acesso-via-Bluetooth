@@ -1,6 +1,7 @@
 package tcc.appbluetooth;
 
 import android.bluetooth.BluetoothSocket;
+import android.view.View;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,11 +16,6 @@ public class ControladorIO {
     private OutputStream        out;
     private ChatListener        listener;
     private boolean             running;
-
-
-    public interface ChatListener {
-        public void onMessageReceived(String msg);
-    }
 
     //construtor
     public ControladorIO(BluetoothSocket socket, ChatListener listener) throws IOException {
@@ -52,6 +48,16 @@ public class ControladorIO {
                 }
             }
         }.start();
+    }
+
+    public interface ChatListener {
+        public void onMessageReceived(String msg);
+    }
+
+    public void sendMessage(String msg) throws IOException {
+        if (out != null) {
+            out.write(msg.getBytes());
+        }
     }
 
     public void parar() {
