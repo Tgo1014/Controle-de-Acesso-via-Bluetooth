@@ -12,6 +12,7 @@ import java.util.UUID;
 public class ConexaoBluetooth {
     /**
      * Verifica o adaptador bluetooth padrão do dispositivo
+     *
      * @return adaptador padrão
      */
     public static BluetoothAdapter adaptador() {
@@ -20,16 +21,19 @@ public class ConexaoBluetooth {
 
     /**
      * Abre um socket de conexão com o dispositivo Bluetooth
+     *
      * @param device
      * @return Retorna true se o dispositivo foi conectado ou false caso apresente alguma falha
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static boolean conectaComDevice(BluetoothDevice device) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        BluetoothSocket     mmSocket, tmpSocket = null;
-        BluetoothAdapter    mBluetoothAdapter   = adaptador();
-        UUID                MY_UUID             = UUID.fromString("04c6032b-0000-4000-8000-00805f9b34fc");
+    public static BluetoothSocket conectaComDevice(BluetoothDevice device) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        BluetoothSocket mmSocket, tmpSocket = null;
+        BluetoothAdapter mBluetoothAdapter = adaptador();
+        //UUID MY_UUID = UUID.fromString("04c6032b-0000-4000-8000-00805f9b34fc");
+        UUID MY_UUID = UUID.fromString("04c6093b-0000-1000-8000-00805f9b34fb");
+
 
         // Monta um socket para conectar ao dispositivo
         mmSocket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(device, 1);
@@ -39,13 +43,13 @@ public class ConexaoBluetooth {
 
         try {
             //verifica se há alguma conexão ativa e fecha-a
-            if (mmSocket.isConnected()){
+            if (mmSocket.isConnected()) {
                 mmSocket.close();
             }
 
             //Faz a conexão com o dispositivo através do socket
             mmSocket.connect();
-            return true;
+            return mmSocket;
 
         } catch (IOException connectException) {
             // Se lançar uma excessão, tenta fechar o socket
@@ -56,7 +60,7 @@ public class ConexaoBluetooth {
             } catch (IOException e) {
                 System.out.println(e.getMessage().toString());
             }
-            return false;
+            return mmSocket;
         }
     }
 }
