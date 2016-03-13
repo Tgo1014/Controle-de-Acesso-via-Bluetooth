@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,9 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autentica);
-        TextView txtMensagem = (TextView) findViewById(R.id.txtMensagem);
+
+        Button btnLiberar = (Button) findViewById(R.id.btnLiberar);
+        Button btnNegado  = (Button) findViewById(R.id.brnNegado);
 
         //recebe o device passado pela ListDispositivoActivity
         device = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
