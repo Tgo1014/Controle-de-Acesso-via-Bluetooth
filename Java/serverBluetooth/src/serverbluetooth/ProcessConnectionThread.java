@@ -2,17 +2,20 @@ package serverbluetooth;
 
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.microedition.io.StreamConnection;
 
 public class ProcessConnectionThread implements Runnable {
-
+    
+    //Strem para receber os dados
     private StreamConnection mConnection;
-    // Constant that indicate command from devices
+    // Constante para receber os comandos via Android
     private static final int EXIT_CMD = -1;
-    private static final int KEY_RIGHT = 1;
-    private static final int KEY_LEFT = 2;
+    private static final int ACESSO_LIBERADO = 1;
+    private static final int ACESSO_NEGADO = 2;
 
     public ProcessConnectionThread(StreamConnection connection) {
         mConnection = connection;
@@ -21,21 +24,21 @@ public class ProcessConnectionThread implements Runnable {
     @Override
     public void run() {
         try {
-
-            // prepare to receive data
+            // recebe os dados via stream
             InputStream inputStream = mConnection.openInputStream();
-            
+
             System.out.println("Conexão estabelecida!");
             System.out.println("Aguardando input...");
 
             while (true) {
+                //le o que foi recebido via bluetooth
                 int command = inputStream.read();
 
                 if (command == EXIT_CMD) {
                     System.out.println("Processo Finalizado!");
                     break;
                 }
-
+                
                 processCommand(command);
             }
         } catch (Exception e) {
@@ -43,26 +46,14 @@ public class ProcessConnectionThread implements Runnable {
         }
     }
 
-    /**
-     * Process the command from client
-     *
-     * @param command the command code
-     */
     private void processCommand(int command) {
         try {
-            Robot robot = new Robot();
             switch (command) {
-                case KEY_RIGHT:
-                    robot.keyPress(KeyEvent.VK_RIGHT);
-                    System.out.println("Direita");
-                    // release the key after it is pressed. Otherwise the event just keeps getting trigged	    		
-                    robot.keyRelease(KeyEvent.VK_RIGHT);
+                case ACESSO_LIBERADO:
+                    System.out.println("Acesso Liberado!");
                     break;
-                case KEY_LEFT:
-                    robot.keyPress(KeyEvent.VK_LEFT);
-                    System.out.println("Esquerda");
-                    // release the key after it is pressed. Otherwise the event just keeps getting trigged	    		
-                    robot.keyRelease(KeyEvent.VK_LEFT);
+                case ACESSO_NEGADO:
+                    System.out.println("Acesso Negado!");
                     break;
             }
         } catch (Exception e) {

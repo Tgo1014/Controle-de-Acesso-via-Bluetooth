@@ -1,21 +1,20 @@
 package tcc.appbluetooth;
 
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 import android.view.View;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/**
- * Created by tgo10 on 06/03/2016.
- */
 public class ControladorIO {
     private BluetoothSocket     socket;
     private InputStream         in;
     private OutputStream        out;
     private ChatListener        listener;
     private boolean             running;
+
 
     //construtor
     public ControladorIO(BluetoothSocket socket, ChatListener listener) throws IOException {
@@ -57,6 +56,12 @@ public class ControladorIO {
     public void sendMessage(String msg) throws IOException {
         if (out != null) {
             out.write(msg.getBytes());
+        }
+    }
+
+    public void sendMessage(int msg) throws IOException {
+        if (out != null) {
+            out.write(msg);
         }
     }
 

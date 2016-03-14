@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,18 +14,26 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
-public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener {
+public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener,  View.OnClickListener  {
 
     UUID uuid = UUID.fromString("04c6093b-0000-1000-8000-00805f9b34fb");
     BluetoothDevice       device;
     ControladorIO         controlador;
     ProgressDialog        caixinha;
 
+    private static final int ACESSO_LIBERADO = 1;
+    private static final int ACESSO_NEGADO = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autentica);
-        TextView txtMensagem = (TextView) findViewById(R.id.txtMensagem);
+
+        Button btnLiberar = (Button) findViewById(R.id.btnLiberar);
+        Button btnNegado  = (Button) findViewById(R.id.brnNegado);
+
+        btnLiberar.setOnClickListener(this);
+        btnNegado.setOnClickListener(this);
 
         //recebe o device passado pela ListDispositivoActivity
         device = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -70,9 +80,6 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (caixinha.isShowing()) {
-                    caixinha.dismiss();
-                }
                 //TODO tratamento quando receber alguma mensagem
             }
         });
@@ -84,5 +91,27 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
         if(controlador != null) {
             controlador.parar();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnLiberar:
+                try {
+                    controlador.sendMessage(ACESSO_LIBERADO);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case R.id.brnNegado:
+                try {
+                    controlador.sendMessage(ACESSO_NEGADO);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+
     }
 }
