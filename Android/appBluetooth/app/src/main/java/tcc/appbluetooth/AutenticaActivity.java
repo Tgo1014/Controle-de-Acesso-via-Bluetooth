@@ -2,13 +2,13 @@ package tcc.appbluetooth;
 
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -20,20 +20,33 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     BluetoothDevice       device;
     ControladorIO         controlador;
     ProgressDialog        caixinha;
+    Usuario               user;
 
     private static final int ACESSO_LIBERADO = 1;
     private static final int ACESSO_NEGADO = 2;
+    private static final int AUTENTICAR = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autentica);
 
-        Button btnLiberar = (Button) findViewById(R.id.btnLiberar);
-        Button btnNegado  = (Button) findViewById(R.id.brnNegado);
+        Button btnLiberar       = (Button) findViewById(R.id.btnLiberar);
+        Button btnNegado        = (Button) findViewById(R.id.btnNegado);
+        Button btnEnviarDados   = (Button) findViewById(R.id.btnEnviaDados);
 
         btnLiberar.setOnClickListener(this);
         btnNegado.setOnClickListener(this);
+        btnEnviarDados.setOnClickListener(this);
+
+        //configura usuario
+        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        if (tm != null)
+            user.setIMEI(tm.getDeviceId());
+        if (tm.getDeviceId() == null)
+            user.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+
+        user.setSIM_ID(tm.getSimSerialNumber());
 
         //recebe o device passado pela ListDispositivoActivity
         device = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -95,7 +108,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnLiberar:
                 try {
                     controlador.sendMessage(ACESSO_LIBERADO);
@@ -104,14 +117,22 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
                 }
                 break;
 
-            case R.id.brnNegado:
+            case R.id.btnNegado:
                 try {
                     controlador.sendMessage(ACESSO_NEGADO);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
+            case R.id.btnEnviaDados:
+                try {
+                    controlador.sendMessage(AUTENTICAR);
+                    controlador.sendMessage(user);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
-
+        }
     }
-}
+

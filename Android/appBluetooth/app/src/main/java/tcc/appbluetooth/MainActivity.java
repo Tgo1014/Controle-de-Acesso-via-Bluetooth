@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //variável para solicitar a ativacao, caso o bluetooth esteja desativado
     private final static int REQUEST_ENABLE_BT = 1;
     String status;
+    Usuario user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +35,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //pega o IMEI do telefone ou em caso de aparelho que não tem IMEI (Tablets) pega o ANDROID_ID
         if (tm != null) {
             txtID.setText("IMEI: " + tm.getDeviceId());
+            user.setIMEI(tm.getDeviceId());
         }
         if (tm.getDeviceId() == null) {
             txtID.setText("ANDROID_ID: " + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+            user.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         }
         txtSIM.setText("SIM_ID: " + tm.getSimSerialNumber());
+        user.setSIM_ID(tm.getSimSerialNumber());
     }
 
 

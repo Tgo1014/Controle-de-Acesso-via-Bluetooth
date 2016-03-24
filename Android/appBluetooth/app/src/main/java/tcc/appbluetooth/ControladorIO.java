@@ -6,6 +6,8 @@ import android.view.View;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 
 public class ControladorIO {
@@ -14,6 +16,7 @@ public class ControladorIO {
     private OutputStream        out;
     private ChatListener        listener;
     private boolean             running;
+    private ObjectOutputStream  objeto;
 
 
     //construtor
@@ -62,6 +65,12 @@ public class ControladorIO {
     public void sendMessage(int msg) throws IOException {
         if (out != null) {
             out.write(msg);
+        }
+    }
+
+    public void sendMessage(Usuario user) throws IOException {
+        if (out != null) {
+            objeto.writeObject(user);
         }
     }
 
