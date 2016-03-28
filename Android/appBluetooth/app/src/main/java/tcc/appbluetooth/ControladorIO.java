@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import android.view.View;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -16,7 +17,7 @@ public class ControladorIO {
     private OutputStream        out;
     private ChatListener        listener;
     private boolean             running;
-    private ObjectOutputStream  objeto;
+    private String              arquivo = "user.ser";
 
 
     //construtor
@@ -56,12 +57,6 @@ public class ControladorIO {
         public void onMessageReceived(String msg);
     }
 
-    public void sendMessage(String msg) throws IOException {
-        if (out != null) {
-            out.write(msg.getBytes());
-        }
-    }
-
     public void sendMessage(int msg) throws IOException {
         if (out != null) {
             out.write(msg);
@@ -70,7 +65,11 @@ public class ControladorIO {
 
     public void sendMessage(Usuario user) throws IOException {
         if (out != null) {
-            objeto.writeObject(user);
+            Object usuario = user;
+
+            ObjectOutputStream oos = new  ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(usuario);
+            oos.close();
         }
     }
 

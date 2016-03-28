@@ -20,7 +20,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     BluetoothDevice       device;
     ControladorIO         controlador;
     ProgressDialog        caixinha;
-    Usuario               user;
+    Usuario               user = new Usuario();
 
     private static final int ACESSO_LIBERADO = 1;
     private static final int ACESSO_NEGADO = 2;
