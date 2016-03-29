@@ -4,4 +4,5 @@
     <string name="txtResposta">Aguardando input...</string>
     <string name="btnLinear">Liberar acesso</string>
     <string name="brtNegado">Acesso negado</string>
+    <string name="btnEnviaDados">Enviar Dados do Celular</string>
 </resources>

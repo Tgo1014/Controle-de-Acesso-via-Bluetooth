@@ -17,24 +17,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //variável para solicitar a ativacao, caso o bluetooth esteja desativado
     private final static int REQUEST_ENABLE_BT = 1;
     String status;
+    Usuario user = new Usuario();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView txtID = (TextView) findViewById(R.id.txtID);
+        TextView txtID  = (TextView) findViewById(R.id.txtID);
+        TextView txtSIM = (TextView) findViewById(R.id.txtSIM);
         Button btnBuscarDevice = (Button) findViewById(R.id.btnBuscarDevice);
         btnBuscarDevice.setOnClickListener(this);
 
-        //pega o IMEI do telefone ou em caso de aparelho que não tem IMEI (Tablets) pega o ANDROID_ID
+        //pega os dados de telefonia do aparelho
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+
+        //pega o IMEI do telefone ou em caso de aparelho que não tem IMEI (Tablets) pega o ANDROID_ID
         if (tm != null) {
             txtID.setText("IMEI: " + tm.getDeviceId());
+            user.setIMEI(tm.getDeviceId());
         }
         if (tm.getDeviceId() == null) {
             txtID.setText("ANDROID_ID: " + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+            user.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         }
+        txtSIM.setText("SIM_ID: " + tm.getSimSerialNumber());
+        user.setSIM_ID(tm.getSimSerialNumber());
     }
 
 
