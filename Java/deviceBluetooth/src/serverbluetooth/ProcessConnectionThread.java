@@ -97,23 +97,20 @@ public class ProcessConnectionThread implements Runnable {
 
         try {
 
-            String imageName = "/serverbluetooth/cinza.png";
-            ImageIcon icon = new ImageIcon(imageName);
+            ImageIcon icon = new ImageIcon(getClass().getResource("cinza.png"));
             jVisor.setText("Nenhum Dispositivo Conectado");
 
             switch (command) {
                 case ACESSO_LIBERADO:
                     System.out.println("Acesso Liberado!");
-                    imageName = "/serverbluetooth/verde.png";
-                    icon = new ImageIcon(imageName);
+                    icon = new ImageIcon(getClass().getResource("verde.png"));
                     jVisor.setText("Acesso Liberado");
                     icon.getImage().flush();
                     jVisor.setIcon(icon);
                     break;
                 case ACESSO_NEGADO:
                     System.out.println("Acesso Negado!");
-                    imageName = "/serverbluetooth/vermelho.png";
-                    icon = new ImageIcon(imageName);
+                    icon = new ImageIcon(getClass().getResource("vermelho.png"));
                     jVisor.setText("Acesso Negado");
                     break;
                 case AUTENTICAR:
