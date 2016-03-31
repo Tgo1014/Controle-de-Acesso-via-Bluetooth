@@ -1,12 +1,20 @@
 package serverbluetooth;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import tcc.appbluetooth.Usuario;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.microedition.io.StreamConnection;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 public class ProcessConnectionThread implements Runnable {
 
@@ -89,23 +97,20 @@ public class ProcessConnectionThread implements Runnable {
 
         try {
 
-            String imageName = "/serverbluetooth/cinza.png";
-            ImageIcon icon = new ImageIcon(imageName);
+            ImageIcon icon = new ImageIcon(getClass().getResource("cinza.png"));
             jVisor.setText("Nenhum Dispositivo Conectado");
 
             switch (command) {
                 case ACESSO_LIBERADO:
                     System.out.println("Acesso Liberado!");
-                    imageName = "/serverbluetooth/verde.png";
-                    icon = new ImageIcon(imageName);
+                    icon = new ImageIcon(getClass().getResource("verde.png"));
                     jVisor.setText("Acesso Liberado");
                     icon.getImage().flush();
                     jVisor.setIcon(icon);
                     break;
                 case ACESSO_NEGADO:
                     System.out.println("Acesso Negado!");
-                    imageName = "/serverbluetooth/vermelho.png";
-                    icon = new ImageIcon(imageName);
+                    icon = new ImageIcon(getClass().getResource("vermelho.png"));
                     jVisor.setText("Acesso Negado");
                     break;
                 case AUTENTICAR:
@@ -117,6 +122,39 @@ public class ProcessConnectionThread implements Runnable {
 
                     System.out.println("SIM_ID: "+ user.getSIM_ID());
                     System.out.println("IMEI: " + user.getIMEI());
+                    
+                    int HTTP_COD_SUCESSO = 200;
+                    
+                    try { 
+                     
+                        URL url = new URL("http://localhost:8080/xml/status/" + user.getSIM_ID() + "/" + user.getIMEI() + "/4545"); 
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection(); 
+
+                        if (con.getResponseCode() != HTTP_COD_SUCESSO) { 
+                            throw new RuntimeException("HTTP error code : "+ con.getResponseCode()); 
+                        } 
+
+                        BufferedReader br = new BufferedReader(new InputStreamReader((con.getInputStream()))); 
+                        JAXBContext jaxbContext = JAXBContext.newInstance(Status.class); 
+                        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller(); 
+
+                        Status status = (Status) jaxbUnmarshaller.unmarshal(br); 
+
+                        System.out.println(status.toString());
+                        
+                        if (status.getStatus() == 0) {
+                            jStatus.setText("Dispositivo Não Autenticado - Status (0)");
+                        } else {
+                            jStatus.setText("Dispositivo Autenticado - Status (1)");
+                        }
+                               
+                        con.disconnect(); 
+
+                    } catch (MalformedURLException e) { 
+                        e.printStackTrace(); 
+                    } catch (IOException e) { 
+                        e.printStackTrace(); 
+                    }
                     
                     break;
             }

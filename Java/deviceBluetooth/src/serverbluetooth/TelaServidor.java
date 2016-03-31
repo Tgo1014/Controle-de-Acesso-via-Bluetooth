@@ -1,6 +1,8 @@
 
 package serverbluetooth;
 
+import javax.swing.ImageIcon;
+
 
 public class TelaServidor extends javax.swing.JFrame {
 
