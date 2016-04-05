@@ -31,12 +31,8 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autentica);
 
-        Button btnLiberar       = (Button) findViewById(R.id.btnLiberar);
-        Button btnNegado        = (Button) findViewById(R.id.btnNegado);
         Button btnEnviarDados   = (Button) findViewById(R.id.btnEnviaDados);
 
-        btnLiberar.setOnClickListener(this);
-        btnNegado.setOnClickListener(this);
         btnEnviarDados.setOnClickListener(this);
 
         //configura usuario
@@ -109,21 +105,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnLiberar:
-                try {
-                    controlador.sendMessage(ACESSO_LIBERADO);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
 
-            case R.id.btnNegado:
-                try {
-                    controlador.sendMessage(ACESSO_NEGADO);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
             case R.id.btnEnviaDados:
                 try {
                     controlador.sendMessage(AUTENTICAR);
