@@ -114,6 +114,7 @@ public class ProcessConnectionThread implements Runnable {
                     try {
 
                         URL url = new URL("http://localhost:8080/xml/status/" + user.getSIM_ID() + "/" + user.getIMEI() + "/4545");
+                        System.out.println(url);
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
                         if (con.getResponseCode() != HTTP_COD_SUCESSO) {
@@ -130,15 +131,15 @@ public class ProcessConnectionThread implements Runnable {
 
                         if (status.getStatus() == 0) {
                             jStatus.setText("Dispositivo Não Autenticado - Status (0)");
-                            System.out.println("Acesso Liberado!");
-                            icon = new ImageIcon(getClass().getResource("verde.png"));
-                            jVisor.setText("Acesso Liberado");
+                            System.out.println("Acesso Negado!");
+                            icon = new ImageIcon(getClass().getResource("vermelho.png"));
+                            jVisor.setText("Acesso Negado!");
                             icon.getImage().flush();
                             jVisor.setIcon(icon);
                         } else {
                             jStatus.setText("Dispositivo Autenticado - Status (1)");
-                            System.out.println("Acesso Negado!");
-                            icon = new ImageIcon(getClass().getResource("vermelho.png"));
+                            System.out.println("Acesso Liberado!");
+                            icon = new ImageIcon(getClass().getResource("verde.png"));
                             jVisor.setText("Acesso Negado");
                         }
 
