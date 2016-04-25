@@ -1,4 +1,4 @@
-package restprj;
+package webService;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;

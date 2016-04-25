@@ -1,4 +1,4 @@
-package restprj;
+package webService;
 
  
 import javax.ws.rs.GET;
