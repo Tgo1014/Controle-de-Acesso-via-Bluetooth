@@ -1,6 +1,8 @@
 package serverbluetooth;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import tcc.appbluetooth.Usuario;
 import java.io.InputStream;
@@ -108,6 +110,31 @@ public class ProcessConnectionThread implements Runnable {
 
                     System.out.println("SIM_ID: " + user.getSIM_ID());
                     System.out.println("IMEI: " + user.getIMEI());
+                        
+                    int filesize=6022386; // filesize temporary hardcoded
+                     long start = System.currentTimeMillis();
+                    int bytesRead;
+                    int current = 0;
+                    byte[] mybytearray = new byte[filesize];
+                    FileOutputStream fos = new FileOutputStream("C://temp//WebOffice.jpg"); // destination path and name of file
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    bytesRead = inputStream.read(mybytearray, 0, mybytearray.length);
+                    current = bytesRead;
+
+                    // thanks to A. Cádiz for the bug fix
+                    do {
+                        bytesRead
+                                = inputStream.read(mybytearray, current, (mybytearray.length - current));
+                        if (bytesRead >= 0) {
+                            current += bytesRead;
+                        }
+                    } while (bytesRead > -1);
+
+                    bos.write(mybytearray, 0, current);
+                    bos.flush();
+                    long end = System.currentTimeMillis();
+                    System.out.println(end - start);
+                    bos.close();
 
                     int HTTP_COD_SUCESSO = 200;
 

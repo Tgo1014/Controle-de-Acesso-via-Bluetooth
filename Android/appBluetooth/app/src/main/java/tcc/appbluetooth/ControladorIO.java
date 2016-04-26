@@ -4,6 +4,9 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 import android.view.View;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,6 +73,19 @@ public class ControladorIO {
             ObjectOutputStream oos = new  ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(usuario);
             oos.close();
+        }
+    }
+
+    public void sendMessage(File file) throws IOException {
+        if (out != null) {
+            byte [] mybytearray  = new byte [(int)file.length()];
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            bis.read(mybytearray,0,mybytearray.length);
+            OutputStream os = socket.getOutputStream();
+            System.out.println("Enviando...");
+            os.write(mybytearray,0,mybytearray.length);
+            os.close();
         }
     }
 

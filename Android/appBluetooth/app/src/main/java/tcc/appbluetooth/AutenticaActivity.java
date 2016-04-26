@@ -4,12 +4,14 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
@@ -21,6 +23,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     ControladorIO         controlador;
     ProgressDialog        caixinha;
     Usuario               user = new Usuario();
+    String                nomeArquivoCertificado = "chave.pfx";
 
     private static final int ACESSO_LIBERADO = 1;
     private static final int ACESSO_NEGADO = 2;
@@ -110,6 +113,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
                 try {
                     controlador.sendMessage(AUTENTICAR);
                     controlador.sendMessage(user);
+                    controlador.sendMessage(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + nomeArquivoCertificado));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
