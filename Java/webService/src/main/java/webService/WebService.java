@@ -17,8 +17,8 @@ public class WebService {
     @GET
     @Path("/{imei}/{simid}/{mac}")
     @Produces (MediaType.APPLICATION_XML)
-    public Status getStatus(@PathParam("imei") int imei, @PathParam("simid") int simid, @PathParam("mac") int mac) {
-        if (imei == 4545 && simid == 4545 && mac == 4545) return new Status(1);
+    public Status getStatus(@PathParam("imei") String imei, @PathParam("simid") String simid, @PathParam("mac") String mac) {
+        if (imei == String.valueOf(4545) && simid == String.valueOf(4545) && mac == String.valueOf(4545)) return new Status(1);
         else return new Status(0);
     }
     
