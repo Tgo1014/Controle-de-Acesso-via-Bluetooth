@@ -4,12 +4,14 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
@@ -21,6 +23,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     ControladorIO         controlador;
     ProgressDialog        caixinha;
     Usuario               user = new Usuario();
+    String                nomeArquivo = "chave.pfx";
 
     private static final int ACESSO_LIBERADO = 1;
     private static final int ACESSO_NEGADO = 2;
@@ -43,11 +46,26 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
             user.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 
         user.setSIM_ID(tm.getSimSerialNumber());
+        user.setCertificado(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + nomeArquivo));
 
         //recebe o device passado pela ListDispositivoActivity
         device = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        autenticar(device);
+
+
+        boolean mExternalStorageAvailable = false;
+        boolean mExternalStorageWriteable = false;
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state) || (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))) {
+            // A memória externa pode ser lida
+            autenticar(device);
+        } else {
+            //Memória bloqueada por algum motivo
+            //TODO tratamento quando memória estiver bloqueada
+        }
+
     }
+
 
     public void autenticar(BluetoothDevice device) {
 
