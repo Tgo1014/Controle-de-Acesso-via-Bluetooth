@@ -78,7 +78,7 @@ public class ProcessConnectionThread implements Runnable {
                 int command = inputStream.read();
 
                 if (command == EXIT_CMD) {
-                    jStatus.setText("Processo Finalizado!");
+                    //jStatus.setText("Processo Finalizado!");
                     System.out.println("Processo Finalizado!");
                     break;
                 }
@@ -140,7 +140,7 @@ public class ProcessConnectionThread implements Runnable {
                             jStatus.setText("Dispositivo Autenticado - Status (1)");
                             System.out.println("Acesso Liberado!");
                             icon = new ImageIcon(getClass().getResource("verde.png"));
-                            jVisor.setText("Acesso Negado");
+                            jVisor.setText("Acesso Liberado");
                         }
 
                         con.disconnect();
