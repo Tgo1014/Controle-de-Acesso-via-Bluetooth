@@ -3,5 +3,4 @@
     <string name="btnBuscarDevice">Procurar Dispositivos</string>
     <string name="txtResposta">Aguardando input...</string>
     <string name="btnAutenticar">Enviar Dados do Celular</string>
-    <string name="btnLerCertificado" />
 </resources>
