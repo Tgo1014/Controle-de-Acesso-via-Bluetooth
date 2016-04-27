@@ -59,7 +59,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
 
             // Faz a conexão se abriu no modo chat cliente
             if(device != null) {
-                caixinha = ProgressDialog.show(this, "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
+                caixinha = ProgressDialog.show(this,  "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
 
                 // Inicia o controladorIO
                 try {

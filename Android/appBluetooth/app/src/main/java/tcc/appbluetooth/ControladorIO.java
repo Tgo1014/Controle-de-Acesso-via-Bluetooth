@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.OutputStream;
@@ -63,29 +64,28 @@ public class ControladorIO {
     public void sendMessage(int msg) throws IOException {
         if (out != null) {
             out.write(msg);
+            out.flush();
         }
     }
 
     public void sendMessage(Usuario user) throws IOException {
         if (out != null) {
             Object usuario = user;
-
-            ObjectOutputStream oos = new  ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream oos = new  ObjectOutputStream(out);
             oos.writeObject(usuario);
-            oos.close();
+            out.flush();
         }
     }
 
     public void sendMessage(File file) throws IOException {
         if (out != null) {
-            byte [] mybytearray  = new byte [(int)file.length()];
-            FileInputStream fis = new FileInputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            bis.read(mybytearray,0,mybytearray.length);
-            OutputStream os = socket.getOutputStream();
-            System.out.println("Enviando...");
-            os.write(mybytearray,0,mybytearray.length);
-            os.close();
+            byte[] bytes = new byte[(int) file.length()];
+            BufferedInputStream bis;
+            bis = new BufferedInputStream(new FileInputStream(file));
+            bis.read(bytes, 0, bytes.length);
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(bytes);
+            out.flush();
         }
     }
 

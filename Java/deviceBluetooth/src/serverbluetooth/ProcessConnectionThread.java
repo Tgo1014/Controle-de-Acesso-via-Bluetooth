@@ -2,15 +2,20 @@ package serverbluetooth;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import tcc.appbluetooth.Usuario;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.microedition.io.StreamConnection;
 import javax.swing.ImageIcon;
@@ -103,38 +108,38 @@ public class ProcessConnectionThread implements Runnable {
             switch (command) {
                 case AUTENTICAR:
                     System.out.println("Autenticar!");
-
+                    
+                    //Recebe o objeto usuário do Android
                     ObjectInputStream ois = new ObjectInputStream(inputStream);
                     Object usuario = ois.readObject();
                     user = Usuario.class.cast(usuario);
 
                     System.out.println("SIM_ID: " + user.getSIM_ID());
                     System.out.println("IMEI: " + user.getIMEI());
-                        
-                    int filesize=6022386; // filesize temporary hardcoded
-                     long start = System.currentTimeMillis();
-                    int bytesRead;
-                    int current = 0;
-                    byte[] mybytearray = new byte[filesize];
-                    FileOutputStream fos = new FileOutputStream("C://temp//WebOffice.jpg"); // destination path and name of file
-                    BufferedOutputStream bos = new BufferedOutputStream(fos);
-                    bytesRead = inputStream.read(mybytearray, 0, mybytearray.length);
-                    current = bytesRead;
+                    
+                    //Recebe o certificado e salva na máquina local
+                    try {
+                        ois = new ObjectInputStream(inputStream);
+                        byte[] bytes;
+                        FileOutputStream fos = new FileOutputStream("C://temp//chave.pfx"); // diretório a ser salvo
 
-                    // thanks to A. Cádiz for the bug fix
-                    do {
-                        bytesRead
-                                = inputStream.read(mybytearray, current, (mybytearray.length - current));
-                        if (bytesRead >= 0) {
-                            current += bytesRead;
+                        try {
+                            bytes = (byte[]) ois.readObject();
+                            fos.write(bytes);
+                        } catch (ClassNotFoundException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } finally {
+                            if (fos != null) {
+                                fos.close();
+                                System.out.println("Arquivo importado!");
+                            }
                         }
-                    } while (bytesRead > -1);
-
-                    bos.write(mybytearray, 0, current);
-                    bos.flush();
-                    long end = System.currentTimeMillis();
-                    System.out.println(end - start);
-                    bos.close();
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(ProcessConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ProcessConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                     int HTTP_COD_SUCESSO = 200;
 

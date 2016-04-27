@@ -81,6 +81,8 @@ public class WaitThread implements Runnable {
                 connection = notifier.acceptAndOpen();
                 
                 RemoteDevice dev = RemoteDevice.getRemoteDevice(connection);
+                jStatus.setText("Conectando...");
+                System.out.println("Conectando...");
                 System.out.println("Remote device address: " + dev.getBluetoothAddress());
                 System.out.println("Remote device name: " + dev.getFriendlyName(true));
                 jName.setText(dev.getFriendlyName(true));
