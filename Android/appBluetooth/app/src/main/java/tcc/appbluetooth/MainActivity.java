@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //variável para solicitar a ativacao, caso o bluetooth esteja desativado
     private final static int REQUEST_ENABLE_BT = 1;
     String status;
-    Usuario user = new Usuario();
+    Smartphone user = new Smartphone();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

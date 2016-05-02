@@ -14,6 +14,7 @@ import android.widget.Button;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.security.cert.CertificateException;
 import java.util.UUID;
 
 public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener,  View.OnClickListener  {
@@ -23,7 +24,8 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     ControladorIO         controlador;
     ProgressDialog        caixinha;
     Usuario               user = new Usuario();
-    String                nomeArquivoCertificado = "chave.pfx";
+    Smartphone            smart = new Smartphone();
+    String                nomeArquivoCertificado = "certificado.p12";
 
     private static final int ACESSO_LIBERADO = 1;
     private static final int ACESSO_NEGADO = 2;
@@ -41,11 +43,11 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
         //configura usuario
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null)
-            user.setIMEI(tm.getDeviceId());
+            smart.setIMEI(tm.getDeviceId());
         if (tm.getDeviceId() == null)
-            user.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+            smart.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 
-        user.setSIM_ID(tm.getSimSerialNumber());
+        smart.setSIM_ID(tm.getSimSerialNumber());
 
         //recebe o device passado pela ListDispositivoActivity
         device = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -112,9 +114,10 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
             case R.id.btnEnviaDados:
                 try {
                     controlador.sendMessage(AUTENTICAR);
-                    controlador.sendMessage(user);
-                    controlador.sendMessage(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + nomeArquivoCertificado));
+                    controlador.sendMessage(smart, user, new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + nomeArquivoCertificado));
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (CertificateException e) {
                     e.printStackTrace();
                 }
                 break;

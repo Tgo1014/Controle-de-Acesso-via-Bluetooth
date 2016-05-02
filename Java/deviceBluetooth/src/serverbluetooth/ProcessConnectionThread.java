@@ -1,8 +1,6 @@
 package serverbluetooth;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +8,6 @@ import tcc.appbluetooth.Usuario;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import tcc.appbluetooth.Requisicao;
 
 public class ProcessConnectionThread implements Runnable {
 
@@ -31,7 +29,7 @@ public class ProcessConnectionThread implements Runnable {
     private static final int EXIT_CMD = -1;
     private static final int AUTENTICAR = 3;
 
-    Usuario user = new Usuario();
+    Requisicao req = new Requisicao();
 
     public ProcessConnectionThread(StreamConnection connection, JLabel jStatus, JLabel jVisor) {
         mConnection = connection;
@@ -111,11 +109,13 @@ public class ProcessConnectionThread implements Runnable {
                     
                     //Recebe o objeto usuário do Android
                     ObjectInputStream ois = new ObjectInputStream(inputStream);
-                    Object usuario = ois.readObject();
-                    user = Usuario.class.cast(usuario);
+                    Object reqObj = ois.readObject();
+                    req = Requisicao.class.cast(reqObj);
 
-                    System.out.println("SIM_ID: " + user.getSIM_ID());
-                    System.out.println("IMEI: " + user.getIMEI());
+                    System.out.println("SIM_ID: " + req.getSIM_ID());
+                    System.out.println("IMEI: " + req.getIMEI());
+                    
+                    System.out.println(req.getCertificado().toString());
                     
                     //Recebe o certificado e salva na máquina local
                     try {
@@ -145,7 +145,7 @@ public class ProcessConnectionThread implements Runnable {
 
                     try {
 
-                        URL url = new URL("http://localhost:8080/xml/status/" + user.getSIM_ID() + "/" + user.getIMEI() + "/4545");
+                        URL url = new URL("http://localhost:8080/xml/status/" + req.getSIM_ID() + "/" + req.getIMEI() + "/4545");
                         System.out.println(url);
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 

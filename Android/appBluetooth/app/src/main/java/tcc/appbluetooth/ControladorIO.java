@@ -2,18 +2,15 @@ package tcc.appbluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
-import android.view.View;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.io.OutputStream;
+import java.security.cert.CertificateException;
 
 public class ControladorIO {
     private BluetoothSocket     socket;
@@ -68,11 +65,13 @@ public class ControladorIO {
         }
     }
 
-    public void sendMessage(Usuario user) throws IOException {
+    public void sendMessage(Smartphone smart, Usuario user, File cert) throws IOException, CertificateException {
         if (out != null) {
-            Object usuario = user;
+            user.leCertificado(cert, "tccanhembi");
+            Requisicao r = new Requisicao(smart.getIMEI(), smart.getSIM_ID(), user.getCertificado());
+            Object req = r;
             ObjectOutputStream oos = new  ObjectOutputStream(out);
-            oos.writeObject(usuario);
+            oos.writeObject(req);
             out.flush();
         }
     }
