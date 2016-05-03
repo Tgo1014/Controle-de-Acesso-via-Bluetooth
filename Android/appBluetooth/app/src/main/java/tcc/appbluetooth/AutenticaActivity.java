@@ -4,14 +4,17 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.security.cert.CertificateException;
 import java.util.UUID;
 
 public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener,  View.OnClickListener  {
@@ -21,6 +24,8 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     ControladorIO         controlador;
     ProgressDialog        caixinha;
     Usuario               user = new Usuario();
+    Smartphone            smart = new Smartphone();
+    String                nomeArquivoCertificado = "certificado.p12";
 
     private static final int ACESSO_LIBERADO = 1;
     private static final int ACESSO_NEGADO = 2;
@@ -31,22 +36,18 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autentica);
 
-        Button btnLiberar       = (Button) findViewById(R.id.btnLiberar);
-        Button btnNegado        = (Button) findViewById(R.id.btnNegado);
         Button btnEnviarDados   = (Button) findViewById(R.id.btnEnviaDados);
 
-        btnLiberar.setOnClickListener(this);
-        btnNegado.setOnClickListener(this);
         btnEnviarDados.setOnClickListener(this);
 
         //configura usuario
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null)
-            user.setIMEI(tm.getDeviceId());
+            smart.setIMEI(tm.getDeviceId());
         if (tm.getDeviceId() == null)
-            user.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+            smart.setIMEI(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 
-        user.setSIM_ID(tm.getSimSerialNumber());
+        smart.setSIM_ID(tm.getSimSerialNumber());
 
         //recebe o device passado pela ListDispositivoActivity
         device = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -60,7 +61,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
 
             // Faz a conexão se abriu no modo chat cliente
             if(device != null) {
-                caixinha = ProgressDialog.show(this, "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
+                caixinha = ProgressDialog.show(this,  "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
 
                 // Inicia o controladorIO
                 try {
@@ -109,26 +110,14 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnLiberar:
-                try {
-                    controlador.sendMessage(ACESSO_LIBERADO);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
 
-            case R.id.btnNegado:
-                try {
-                    controlador.sendMessage(ACESSO_NEGADO);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
             case R.id.btnEnviaDados:
                 try {
                     controlador.sendMessage(AUTENTICAR);
-                    controlador.sendMessage(user);
+                    controlador.sendMessage(smart, user, new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + nomeArquivoCertificado));
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (CertificateException e) {
                     e.printStackTrace();
                 }
                 break;

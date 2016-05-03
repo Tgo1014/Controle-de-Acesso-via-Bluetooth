@@ -1,20 +1,26 @@
 package serverbluetooth;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import tcc.appbluetooth.Usuario;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 
 import javax.microedition.io.StreamConnection;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import tcc.appbluetooth.Requisicao;
 
 public class ProcessConnectionThread implements Runnable {
 
@@ -22,11 +28,10 @@ public class ProcessConnectionThread implements Runnable {
     private StreamConnection mConnection;
     // Constante para receber os comandos via Android
     private static final int EXIT_CMD = -1;
-    private static final int ACESSO_LIBERADO = 1;
-    private static final int ACESSO_NEGADO = 2;
     private static final int AUTENTICAR = 3;
+    private static final String MAC_ADRESS = "123456789987654321";
 
-    Usuario user = new Usuario();
+    Requisicao req = new Requisicao();
 
     public ProcessConnectionThread(StreamConnection connection, JLabel jStatus, JLabel jVisor) {
         mConnection = connection;
@@ -80,13 +85,13 @@ public class ProcessConnectionThread implements Runnable {
                 int command = inputStream.read();
 
                 if (command == EXIT_CMD) {
-                    jStatus.setText("Processo Finalizado!");
+                    //jStatus.setText("Processo Finalizado!");
                     System.out.println("Processo Finalizado!");
                     break;
                 }
 
                 processCommand(command, inputStream);
-                
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,61 +106,65 @@ public class ProcessConnectionThread implements Runnable {
             jVisor.setText("Nenhum Dispositivo Conectado");
 
             switch (command) {
-                case ACESSO_LIBERADO:
-                    System.out.println("Acesso Liberado!");
-                    icon = new ImageIcon(getClass().getResource("verde.png"));
-                    jVisor.setText("Acesso Liberado");
-                    icon.getImage().flush();
-                    jVisor.setIcon(icon);
-                    break;
-                case ACESSO_NEGADO:
-                    System.out.println("Acesso Negado!");
-                    icon = new ImageIcon(getClass().getResource("vermelho.png"));
-                    jVisor.setText("Acesso Negado");
-                    break;
                 case AUTENTICAR:
                     System.out.println("Autenticar!");
-                    
-                    ObjectInputStream ois = new ObjectInputStream(inputStream);
-                    Object usuario = ois.readObject();
-                    user = Usuario.class.cast(usuario);
 
-                    System.out.println("SIM_ID: "+ user.getSIM_ID());
-                    System.out.println("IMEI: " + user.getIMEI());
+                    //Recebe o objeto usuário do Android
+                    ObjectInputStream ois = new ObjectInputStream(inputStream);
+                    Object reqObj = ois.readObject();
+                    req = Requisicao.class.cast(reqObj);
+
+                    System.out.println("SIM_ID: " + req.getSIM_ID());
+                    System.out.println("IMEI: " + req.getIMEI());
+                    
+                    //System.out.println("------------------------------------CERTIFICADO--------------------------------");
+                    //System.out.println(req.getCertificado().toString());
+                    
+                    //System.out.println("------------------------------------STRINGADO--------------------------------");
+                    //System.out.println(objetoToBase64(req.getCertificado()));
                     
                     int HTTP_COD_SUCESSO = 200;
-                    
-                    try { 
-                     
-                        URL url = new URL("http://localhost:8080/xml/status/" + user.getSIM_ID() + "/" + user.getIMEI() + "/4545"); 
-                        HttpURLConnection con = (HttpURLConnection) url.openConnection(); 
 
-                        if (con.getResponseCode() != HTTP_COD_SUCESSO) { 
-                            throw new RuntimeException("HTTP error code : "+ con.getResponseCode()); 
-                        } 
+                    try {
 
-                        BufferedReader br = new BufferedReader(new InputStreamReader((con.getInputStream()))); 
-                        JAXBContext jaxbContext = JAXBContext.newInstance(Status.class); 
-                        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller(); 
+                        URL url = new URL("http://localhost:8080/xml/status/" + req.getSIM_ID()+ "/" + req.getIMEI()+ "/" + MAC_ADRESS + "/" + objetoToBase64(req.getCertificado()));
+                        System.out.println(url);
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-                        Status status = (Status) jaxbUnmarshaller.unmarshal(br); 
+                        if (con.getResponseCode() != HTTP_COD_SUCESSO) {
+                            throw new RuntimeException("HTTP error code : " + con.getResponseCode());
+                        }
+
+                        BufferedReader br = new BufferedReader(new InputStreamReader((con.getInputStream())));
+                        JAXBContext jaxbContext = JAXBContext.newInstance(Status.class);
+                        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+                        Status status = (Status) jaxbUnmarshaller.unmarshal(br);
 
                         System.out.println(status.toString());
-                        
+
                         if (status.getStatus() == 0) {
                             jStatus.setText("Dispositivo Não Autenticado - Status (0)");
+                            System.out.println("Acesso Negado!");
+                            icon = new ImageIcon(getClass().getResource("vermelho.png"));
+                            jVisor.setText("Acesso Negado!");
+                            icon.getImage().flush();
+                            jVisor.setIcon(icon);
                         } else {
                             jStatus.setText("Dispositivo Autenticado - Status (1)");
+                            System.out.println("Acesso Liberado!");
+                            icon = new ImageIcon(getClass().getResource("verde.png"));
+                            jVisor.setText("Acesso Liberado");
                         }
-                               
-                        con.disconnect(); 
 
-                    } catch (MalformedURLException e) { 
-                        e.printStackTrace(); 
-                    } catch (IOException e) { 
-                        e.printStackTrace(); 
+                        con.disconnect();
+
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    
+
                     break;
             }
 
@@ -165,5 +174,22 @@ public class ProcessConnectionThread implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static String objetoToBase64(Serializable o) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(o);
+        oos.close();
+        return Base64.getUrlEncoder().encodeToString(baos.toByteArray());
+    }
+
+    private static X509Certificate Base64ToObjeect(String s) throws IOException, ClassNotFoundException {
+        byte[] data = Base64.getUrlDecoder().decode(s);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+        X509Certificate o = (X509Certificate) ois.readObject();
+        ois.close();
+        return o;
     }
 }

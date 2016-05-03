@@ -2,14 +2,15 @@ package tcc.appbluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
-import android.view.View;
 
-import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.io.OutputStream;
+import java.security.cert.CertificateException;
 
 public class ControladorIO {
     private BluetoothSocket     socket;
@@ -60,16 +61,30 @@ public class ControladorIO {
     public void sendMessage(int msg) throws IOException {
         if (out != null) {
             out.write(msg);
+            out.flush();
         }
     }
 
-    public void sendMessage(Usuario user) throws IOException {
+    public void sendMessage(Smartphone smart, Usuario user, File cert) throws IOException, CertificateException {
         if (out != null) {
-            Object usuario = user;
+            user.leCertificado(cert, "tccanhembi");
+            Requisicao r = new Requisicao(smart.getIMEI(), smart.getSIM_ID(), user.getCertificado());
+            Object req = r;
+            ObjectOutputStream oos = new  ObjectOutputStream(out);
+            oos.writeObject(req);
+            out.flush();
+        }
+    }
 
-            ObjectOutputStream oos = new  ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(usuario);
-            oos.close();
+    public void sendMessage(File file) throws IOException {
+        if (out != null) {
+            byte[] bytes = new byte[(int) file.length()];
+            BufferedInputStream bis;
+            bis = new BufferedInputStream(new FileInputStream(file));
+            bis.read(bytes, 0, bytes.length);
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(bytes);
+            out.flush();
         }
     }
 
