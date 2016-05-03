@@ -1,18 +1,19 @@
 package serverbluetooth;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import tcc.appbluetooth.Usuario;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 
 import javax.microedition.io.StreamConnection;
 import javax.swing.ImageIcon;
@@ -28,6 +29,7 @@ public class ProcessConnectionThread implements Runnable {
     // Constante para receber os comandos via Android
     private static final int EXIT_CMD = -1;
     private static final int AUTENTICAR = 3;
+    private static final String MAC_ADRESS = "123456789987654321";
 
     Requisicao req = new Requisicao();
 
@@ -106,7 +108,7 @@ public class ProcessConnectionThread implements Runnable {
             switch (command) {
                 case AUTENTICAR:
                     System.out.println("Autenticar!");
-                    
+
                     //Recebe o objeto usuário do Android
                     ObjectInputStream ois = new ObjectInputStream(inputStream);
                     Object reqObj = ois.readObject();
@@ -115,37 +117,17 @@ public class ProcessConnectionThread implements Runnable {
                     System.out.println("SIM_ID: " + req.getSIM_ID());
                     System.out.println("IMEI: " + req.getIMEI());
                     
-                    System.out.println(req.getCertificado().toString());
+                    //System.out.println("------------------------------------CERTIFICADO--------------------------------");
+                    //System.out.println(req.getCertificado().toString());
                     
-                    //Recebe o certificado e salva na máquina local
-                    try {
-                        ois = new ObjectInputStream(inputStream);
-                        byte[] bytes;
-                        FileOutputStream fos = new FileOutputStream("C://temp//chave.pfx"); // diretório a ser salvo
-
-                        try {
-                            bytes = (byte[]) ois.readObject();
-                            fos.write(bytes);
-                        } catch (ClassNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } finally {
-                            if (fos != null) {
-                                fos.close();
-                                System.out.println("Arquivo importado!");
-                            }
-                        }
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(ProcessConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(ProcessConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
+                    //System.out.println("------------------------------------STRINGADO--------------------------------");
+                    //System.out.println(objetoToBase64(req.getCertificado()));
+                    
                     int HTTP_COD_SUCESSO = 200;
 
                     try {
 
-                        URL url = new URL("http://localhost:8080/xml/status/" + req.getSIM_ID() + "/" + req.getIMEI() + "/4545");
+                        URL url = new URL("http://localhost:8080/xml/status/" + req.getSIM_ID()+ "/" + req.getIMEI()+ "/" + MAC_ADRESS + "/" + objetoToBase64(req.getCertificado()));
                         System.out.println(url);
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -192,5 +174,22 @@ public class ProcessConnectionThread implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static String objetoToBase64(Serializable o) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(o);
+        oos.close();
+        return Base64.getUrlEncoder().encodeToString(baos.toByteArray());
+    }
+
+    private static X509Certificate Base64ToObjeect(String s) throws IOException, ClassNotFoundException {
+        byte[] data = Base64.getUrlDecoder().decode(s);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+        X509Certificate o = (X509Certificate) ois.readObject();
+        ois.close();
+        return o;
     }
 }
