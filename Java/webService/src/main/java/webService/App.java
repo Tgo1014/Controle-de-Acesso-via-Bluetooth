@@ -22,6 +22,7 @@ public class App {
            WebService.class.getCanonicalName());
  
         try {
+        	jettyServer.stop();
             jettyServer.start();
             jettyServer.join();
         } finally {
