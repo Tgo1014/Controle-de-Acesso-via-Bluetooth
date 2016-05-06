@@ -14,7 +14,7 @@ public class MySQL {
 	
 	public static Connection connect(){
 		try {
-	        Class.forName("com.mysql.jdbc.Driver");
+	        Class.forName("com.mysql.jdbc");
 	        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/tccanhembi", "tccanhembi", "tccanhembi");
 	        return con;
 	    }
