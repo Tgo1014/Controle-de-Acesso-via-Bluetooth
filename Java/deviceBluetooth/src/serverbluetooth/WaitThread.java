@@ -1,7 +1,6 @@
 package serverbluetooth;
 
 import java.io.IOException;
-
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
@@ -14,33 +13,17 @@ import javax.swing.JLabel;
 
 public class WaitThread implements Runnable {
 
+    private JLabel jStatus, jVisor, jName;
+
     public WaitThread(JLabel jStatus, JLabel jVisor, JLabel jName) {
         this.jStatus = jStatus;
         this.jVisor = jVisor;
         this.jName = jName;
     }
-    
+
     public WaitThread() {
     }
-    
-    private JLabel jStatus, jVisor, jName;
 
-    public JLabel getjStatus() {
-        return jStatus;
-    }
-
-    public void setjStatus(JLabel jStatus) {
-        this.jStatus = jStatus;
-    }
-    
-    public JLabel getjVisor() {
-        return jVisor;
-    }
-
-    public void setjVisor(JLabel jVisor) {
-        this.jVisor = jVisor;
-    }
-    
     @Override
     public void run() {
         waitForConnection();
@@ -79,7 +62,7 @@ public class WaitThread implements Runnable {
                 jStatus.setText("Aguardando conexão...");
                 System.out.println("Aguardando conexão...");
                 connection = notifier.acceptAndOpen();
-                
+
                 RemoteDevice dev = RemoteDevice.getRemoteDevice(connection);
                 jStatus.setText("Conectando...");
                 System.out.println("Conectando...");
@@ -96,4 +79,21 @@ public class WaitThread implements Runnable {
             }
         }
     }
+
+    public JLabel getjStatus() {
+        return jStatus;
+    }
+
+    public void setjStatus(JLabel jStatus) {
+        this.jStatus = jStatus;
+    }
+
+    public JLabel getjVisor() {
+        return jVisor;
+    }
+
+    public void setjVisor(JLabel jVisor) {
+        this.jVisor = jVisor;
+    }
+
 }
