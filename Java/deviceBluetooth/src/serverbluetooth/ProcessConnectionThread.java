@@ -33,42 +33,6 @@ public class ProcessConnectionThread implements Runnable {
 
     Requisicao req = new Requisicao();
 
-    public ProcessConnectionThread(StreamConnection connection, JLabel jStatus, JLabel jVisor) {
-        mConnection = connection;
-        this.jStatus = jStatus;
-        this.jVisor = jVisor;
-    }
-
-    public ProcessConnectionThread(StreamConnection connection) {
-        mConnection = connection;
-    }
-
-    private JLabel jStatus, jVisor;
-
-    public StreamConnection getmConnection() {
-        return mConnection;
-    }
-
-    public void setmConnection(StreamConnection mConnection) {
-        this.mConnection = mConnection;
-    }
-
-    public JLabel getjVisor() {
-        return jVisor;
-    }
-
-    public void setjVisor(JLabel jVisor) {
-        this.jVisor = jVisor;
-    }
-
-    public JLabel getjStatus() {
-        return jStatus;
-    }
-
-    public void setjStatus(JLabel jStatus) {
-        this.jStatus = jStatus;
-    }
-
     @Override
     public void run() {
         try {
@@ -85,8 +49,13 @@ public class ProcessConnectionThread implements Runnable {
                 int command = inputStream.read();
 
                 if (command == EXIT_CMD) {
-                    //jStatus.setText("Processo Finalizado!");
-                    System.out.println("Processo Finalizado!");
+                    
+                    ImageIcon icon = new ImageIcon(getClass().getResource("cinza.png"));
+                    jVisor.setText("Aguardando!");
+                    icon.getImage().flush();
+                    jVisor.setIcon(icon);
+                    jStatus.setText("Desconectado!");
+                    System.out.println("Desconectado!");
                     break;
                 }
 
@@ -107,7 +76,7 @@ public class ProcessConnectionThread implements Runnable {
 
             switch (command) {
                 case AUTENTICAR:
-                    System.out.println("Autenticar!");
+                    System.out.println("Autenticação...");
 
                     //Recebe o objeto usuário do Android
                     ObjectInputStream ois = new ObjectInputStream(inputStream);
@@ -116,18 +85,12 @@ public class ProcessConnectionThread implements Runnable {
 
                     System.out.println("SIM_ID: " + req.getSIM_ID());
                     System.out.println("IMEI: " + req.getIMEI());
-                    
-                    //System.out.println("------------------------------------CERTIFICADO--------------------------------");
-                    //System.out.println(req.getCertificado().toString());
-                    
-                    //System.out.println("------------------------------------STRINGADO--------------------------------");
-                    //System.out.println(objetoToBase64(req.getCertificado()));
-                    
+
                     int HTTP_COD_SUCESSO = 200;
 
                     try {
 
-                        URL url = new URL("http://localhost:8080/xml/status/" + req.getSIM_ID()+ "/" + req.getIMEI()+ "/" + MAC_ADRESS + "/" + objetoToBase64(req.getCertificado()));
+                        URL url = new URL("http://localhost:8080/xml/status/" + req.getSIM_ID() + "/" + req.getIMEI() + "/" + MAC_ADRESS + "/" + objetoToBase64(req.getCertificado()));
                         System.out.println(url);
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -144,14 +107,14 @@ public class ProcessConnectionThread implements Runnable {
                         System.out.println(status.toString());
 
                         if (status.getStatus() == 0) {
-                            jStatus.setText("Dispositivo Não Autenticado - Status (0)");
+                            jStatus.setText("Dispositivo não autenticado");
                             System.out.println("Acesso Negado!");
                             icon = new ImageIcon(getClass().getResource("vermelho.png"));
                             jVisor.setText("Acesso Negado!");
                             icon.getImage().flush();
                             jVisor.setIcon(icon);
                         } else {
-                            jStatus.setText("Dispositivo Autenticado - Status (1)");
+                            jStatus.setText("Dispositivo autenticado");
                             System.out.println("Acesso Liberado!");
                             icon = new ImageIcon(getClass().getResource("verde.png"));
                             jVisor.setText("Acesso Liberado");
@@ -191,5 +154,41 @@ public class ProcessConnectionThread implements Runnable {
         X509Certificate o = (X509Certificate) ois.readObject();
         ois.close();
         return o;
+    }
+
+    public ProcessConnectionThread(StreamConnection connection, JLabel jStatus, JLabel jVisor) {
+        mConnection = connection;
+        this.jStatus = jStatus;
+        this.jVisor = jVisor;
+    }
+
+    public ProcessConnectionThread(StreamConnection connection) {
+        mConnection = connection;
+    }
+
+    private JLabel jStatus, jVisor;
+
+    public StreamConnection getmConnection() {
+        return mConnection;
+    }
+
+    public void setmConnection(StreamConnection mConnection) {
+        this.mConnection = mConnection;
+    }
+
+    public JLabel getjVisor() {
+        return jVisor;
+    }
+
+    public void setjVisor(JLabel jVisor) {
+        this.jVisor = jVisor;
+    }
+
+    public JLabel getjStatus() {
+        return jStatus;
+    }
+
+    public void setjStatus(JLabel jStatus) {
+        this.jStatus = jStatus;
     }
 }

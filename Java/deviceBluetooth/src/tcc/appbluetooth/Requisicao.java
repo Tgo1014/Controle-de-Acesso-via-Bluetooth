@@ -3,7 +3,7 @@ package tcc.appbluetooth;
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
 
-public class Requisicao implements Serializable{
+public class Requisicao implements Serializable {
 
     static final long serialVersionUID = 123456789123456789L;
 
@@ -16,13 +16,12 @@ public class Requisicao implements Serializable{
         this.SIM_ID = SIM_ID;
         this.certificado = certificado;
     }
-    
+
     public Requisicao() {
         this.IMEI = null;
         this.SIM_ID = null;
         this.certificado = null;
-    }  
-    
+    }
 
     public String getIMEI() {
         return IMEI;

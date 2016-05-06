@@ -1,16 +1,11 @@
 package tcc.appbluetooth;
 
-import android.util.Log;
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Enumeration;
 
 public class Usuario {
 
@@ -32,17 +27,17 @@ public class Usuario {
         this.certificado = certificado;
     }
 
-    public void leCertificado(File pathToFile, String passphrase) throws CertificateException, FileNotFoundException {
+    public void leCertificado(File pathToFile) throws CertificateException, FileNotFoundException {
         try {
-            KeyStore p12 = KeyStore.getInstance("pkcs12");
-            p12.load(new FileInputStream(pathToFile), passphrase.toCharArray());
-            Enumeration e = p12.aliases();
-            String alias = (String) e.nextElement();
-            this.setCertificado((X509Certificate) p12.getCertificate(alias));
 
-            Log.d("certificado",this.certificado.getPublicKey().toString());
+            CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+            FileInputStream fis = new FileInputStream(pathToFile);
+            X509Certificate cert = (X509Certificate) certFactory.generateCertificate(fis);
 
-        } catch (Exception e) {}
+            this.setCertificado(cert);
+
+        } catch (Exception e) {
+        }
     }
 
 }

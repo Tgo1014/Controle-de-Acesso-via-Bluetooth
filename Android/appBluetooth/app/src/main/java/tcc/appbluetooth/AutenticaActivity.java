@@ -17,15 +17,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.cert.CertificateException;
 import java.util.UUID;
 
-public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener,  View.OnClickListener  {
+public class AutenticaActivity extends AppCompatActivity implements ControladorIO.ChatListener, View.OnClickListener {
 
     UUID uuid = UUID.fromString("04c6093b-0000-1000-8000-00805f9b34fb");
-    BluetoothDevice       device;
-    ControladorIO         controlador;
-    ProgressDialog        caixinha;
-    Usuario               user = new Usuario();
-    Smartphone            smart = new Smartphone();
-    String                nomeArquivoCertificado = "certificado.p12";
+    BluetoothDevice device;
+    ControladorIO controlador;
+    ProgressDialog caixinha;
+    Usuario user = new Usuario();
+    Smartphone smart = new Smartphone();
+    String nomeArquivoCertificado = "certificado.cer";
 
     private static final int ACESSO_LIBERADO = 1;
     private static final int ACESSO_NEGADO = 2;
@@ -36,12 +36,12 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autentica);
 
-        Button btnEnviarDados   = (Button) findViewById(R.id.btnEnviaDados);
+        Button btnEnviarDados = (Button) findViewById(R.id.btnEnviaDados);
 
         btnEnviarDados.setOnClickListener(this);
 
         //configura usuario
-        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null)
             smart.setIMEI(tm.getDeviceId());
         if (tm.getDeviceId() == null)
@@ -60,8 +60,8 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
         try {
 
             // Faz a conexão se abriu no modo chat cliente
-            if(device != null) {
-                caixinha = ProgressDialog.show(this,  "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
+            if (device != null) {
+                caixinha = ProgressDialog.show(this, "Autenticando", "Aguarde enquanto conectamos ao servidor", false, true);
 
                 // Inicia o controladorIO
                 try {
@@ -102,7 +102,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(controlador != null) {
+        if (controlador != null) {
             controlador.parar();
         }
     }
@@ -121,7 +121,7 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
                     e.printStackTrace();
                 }
                 break;
-            }
         }
     }
+}
 
