@@ -1,7 +1,6 @@
 package tcc.appbluetooth;
 
 import android.bluetooth.BluetoothSocket;
-import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -13,13 +12,11 @@ import java.io.OutputStream;
 import java.security.cert.CertificateException;
 
 public class ControladorIO {
-    private BluetoothSocket     socket;
-    private InputStream         in;
-    private OutputStream        out;
-    private ChatListener        listener;
-    private boolean             running;
-    private String              arquivo = "user.ser";
-
+    private BluetoothSocket socket;
+    private InputStream in;
+    private OutputStream out;
+    private ChatListener listener;
+    private boolean running;
 
     //construtor
     public ControladorIO(BluetoothSocket socket, ChatListener listener) throws IOException {
@@ -31,7 +28,7 @@ public class ControladorIO {
     }
 
     public void iniciar() {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 running = true;
@@ -54,10 +51,6 @@ public class ControladorIO {
         }.start();
     }
 
-    public interface ChatListener {
-        public void onMessageReceived(String msg);
-    }
-
     public void sendMessage(int msg) throws IOException {
         if (out != null) {
             out.write(msg);
@@ -67,10 +60,10 @@ public class ControladorIO {
 
     public void sendMessage(Smartphone smart, Usuario user, File cert) throws IOException, CertificateException {
         if (out != null) {
-            user.leCertificado(cert, "tccanhembi");
+            user.leCertificado(cert);
             Requisicao r = new Requisicao(smart.getIMEI(), smart.getSIM_ID(), user.getCertificado());
             Object req = r;
-            ObjectOutputStream oos = new  ObjectOutputStream(out);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
             oos.writeObject(req);
             out.flush();
         }
@@ -105,5 +98,9 @@ public class ControladorIO {
             }
         } catch (IOException e) {
         }
+    }
+
+    public interface ChatListener {
+        public void onMessageReceived(String msg);
     }
 }
