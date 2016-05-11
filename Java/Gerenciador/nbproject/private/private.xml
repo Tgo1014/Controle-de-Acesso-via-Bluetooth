@@ -2,29 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-<<<<<<< Updated upstream
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/telaDispositivos.java</file>
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/Tabelas/Usuario.java</file>
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/telaSmartphones.java</file>
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/telaGrupo.java</file>
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/ClassesDAO/UsuarioDAO.java</file>
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/telaUsuario.java</file>
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/br/com/ConexaoBanco/ConexaoMySQL.java</file>
-            <file>file:/C:/Users/Home/Documents/NetBeansProjects/gerenciador/src/Tabelas/UsuarioTableModel.java</file>
-=======
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/splash.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/img.jpg</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/br/com/ConexaoBanco/ConexaoMySQL.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/telaGrupo.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/telaUsuario.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/telaDispositivos.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/telaInicial.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/Certificados/Certificado.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/telaSmartphones.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/menuInicial.java</file>
-            <file>file:/C:/Users/Tiago/Documents/Controle-de-Acesso-via-Bluetooth/Java/Gerenciador/src/ClassesDAO/DispositivoDAO.java</file>
->>>>>>> Stashed changes
-        </group>
+        <group/>
     </open-files>
 </project-private>
