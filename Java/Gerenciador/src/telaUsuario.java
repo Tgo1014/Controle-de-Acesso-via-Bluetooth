@@ -14,6 +14,7 @@ import ClassesDAO.Usuario_GrupoDAO;
 import Tabelas.Grupo;
 import Tabelas.GrupoTableModel;
 import Tabelas.Usuario_Grupo;
+import java.io.File;
 import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 
@@ -30,7 +31,7 @@ public class telaUsuario extends javax.swing.JFrame {
     public String sbGerarCertificado(String nome) throws IOException, CertificateEncodingException, ClassNotFoundException {
 
         //gera um certificado com o nome 
-        X509Certificate cert = Certificado.geraCertificado("cert_" + nome);
+        X509Certificate cert = Certificado.geraCertificado("Anhembi Morumbi - " + nome);
 
         //Extrai o certificado para área de trabalho no formato .cer
         Certificado.extraiCertificado(cert);
@@ -40,10 +41,10 @@ public class telaUsuario extends javax.swing.JFrame {
         System.out.println(StringCert64);
 
         //Usa string para gerar um certificado
-        X509Certificate cert64 = Certificado.base64ParaCert(StringCert64);
+        //X509Certificate cert64 = Certificado.base64ParaCert(StringCert64);
 
         //Extrai o certificado gerado pela String
-        Certificado.extraiCertificado(cert64, "CertificadoBase64");
+        //Certificado.extraiCertificado(cert64, "CertificadoBase64");
 
         return StringCert64;
 
@@ -297,6 +298,8 @@ public class telaUsuario extends javax.swing.JFrame {
                     ugDAO.inserirDados(ug);
                     
                 }
+                
+                Email.Email.enviaEmail("taraujodesouza@gmail.com", new File(System.getProperty("user.home") + File.separator + "Desktop\\Certificado.cer"));
                 
                 JOptionPane.showMessageDialog(null, "Usuário inserido com Sucesso!", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
 
