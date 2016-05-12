@@ -90,7 +90,7 @@ public class ProcessConnectionThread implements Runnable {
 
                     try {
 
-                        URL url = new URL("http://localhost:8080/xml/status/" + req.getSIM_ID() + "/" + req.getIMEI() + "/" + MAC_ADRESS + "/" + objetoToBase64(req.getCertificado()));
+                        URL url = new URL("http://localhost:8080/xml/status/" + req.getIMEI()+ "/" + req.getSIM_ID()+ "/" + MAC_ADRESS + "/" + objetoToBase64(req.getCertificado()));
                         System.out.println(url);
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
