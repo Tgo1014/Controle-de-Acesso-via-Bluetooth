@@ -24,13 +24,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView txtID  = (TextView) findViewById(R.id.txtID);
+        TextView txtID = (TextView) findViewById(R.id.txtID);
         TextView txtSIM = (TextView) findViewById(R.id.txtSIM);
         Button btnBuscarDevice = (Button) findViewById(R.id.btnBuscarDevice);
         btnBuscarDevice.setOnClickListener(this);
 
         //pega os dados de telefonia do aparelho
-        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
         //pega o IMEI do telefone ou em caso de aparelho que não tem IMEI (Tablets) pega o ANDROID_ID
         if (tm != null) {
@@ -70,5 +70,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
         }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_ENABLE_BT){
+            if(resultCode==RESULT_OK){
+                startActivity(new Intent(this, ListarDispositivosActivity.class));
+            }else{
+                Toast.makeText(MainActivity.this, "Está aplicação necessita do Bluetooth ativo para funcionar", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 }
