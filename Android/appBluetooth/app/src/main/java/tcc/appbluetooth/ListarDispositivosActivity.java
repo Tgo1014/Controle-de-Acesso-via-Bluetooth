@@ -37,6 +37,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
         dispositivos = new ArrayList<String>();
 
         if (adaptador != null) {
+            //adiciona dispositivos já pareados ao array de dispositivos
             listaDeDevices = new ArrayList<BluetoothDevice>(adaptador.getBondedDevices());
 
             // Registra o receiver de mensagens broadcast
@@ -46,13 +47,19 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
             filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
             this.registerReceiver(mReceiver, filter);
 
-            if (adaptador.isDiscovering()) {    //se já estiver procurando dispositivos, cancela
+            //se já estiver procurando dispositivos, cancela
+            if (adaptador.isDiscovering()) {
                     adaptador.cancelDiscovery();
             }
 
             // Iniciar a busca de dispositivos Bluetooth
+            if (listaDeDevices.size() == 0 || listaDeDevices == null){
+                caixinha = ProgressDialog.show(this, "Buscando", "Buscando dispositivos bluetooth...", false, true);
+            } else {
+                updateLista();
+                Toast.makeText(getApplicationContext(), "Busca em andamento...", Toast.LENGTH_LONG).show();
+            }
             adaptador.startDiscovery();
-            caixinha = ProgressDialog.show(this, "Buscando", "Buscando dispositivos bluetooth...", false, true);
         }
     }
 
@@ -82,8 +89,11 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
 
                 // Insere na lista os devices que ainda já são conhecidos (pareaados)
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    //limpa dispositivos e adiciona todos novamente
+                    listaDeDevices.clear();
                     listaDeDevices.add(device);
                     Toast.makeText(context, "Encontrou: " + device.getName() + ":" + device.getAddress(), Toast.LENGTH_SHORT).show();
+                    updateLista();
                     count++;
                 }
 
@@ -95,20 +105,20 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
             } else if (acao == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
                 // Busca Finalizada
                 if (listaDeDevices == null || listaDeDevices.size() == 0) {
-                    if (caixinha.isShowing()) {
-                        caixinha.dismiss();
-                    }
-                    Toast.makeText(context, "Nenhum dispositivo encontrado", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Nenhum dispositivo novo encontrado", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(context, "Busca finalizada", Toast.LENGTH_SHORT).show();
-                    updateLista();
-                    if (caixinha.isShowing()) {
-                        caixinha.dismiss();
+                    if (caixinha != null) {
+                        if (caixinha.isShowing()) {
+                            caixinha.dismiss();
+                        }
                     }
-                    if (count > 1)
-                        Toast.makeText(context, count + " novos dispositivos encontrados", Toast.LENGTH_LONG).show();
+                    
+                    if (count > 0){
+                        Toast.makeText(context, count + " novo(s) dispositivo(s) encontrado(s)", Toast.LENGTH_LONG).show();
+                    }
                     else
-                        Toast.makeText(context, count + " novo dispositivo encontrado", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Nenhum novo dispositivo encontrado", Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -125,6 +135,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
         // Adaptador para inserir os dados na ListView
         int layout = android.R.layout.simple_list_item_1;
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, layout, dispositivos);
+
         listViewDevices.setAdapter(adapter);
         listViewDevices.setOnItemClickListener(this);
     }
