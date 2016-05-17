@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static int REQUEST_ENABLE_BT = 1;
     private final static int REQUEST_FILE = 2;
     String status;
-    String caminhoCert;
+    String caminhoCert = "";
     Smartphone user = new Smartphone();
     File certificado;
 
@@ -114,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //se o bluetooth nao estiver ligado, solicita ao usuario que ligue
                         Intent habilitaBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(habilitaBluetooth, REQUEST_ENABLE_BT);
+                    } else if (caminhoCert == null){
+                        status = "Certificado não selecionado, por favor selecione um certificado";
+                        Toast.makeText(this, status, Toast.LENGTH_LONG).show();
                     } else if (!new File (caminhoCert).exists()){
                         status = "O Certificado escolhido não existe, por favor selecione um certificado válido";
                         Toast.makeText(this, status, Toast.LENGTH_LONG).show();
@@ -148,7 +151,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //aguarda resposta da ativação do Bluetooth
         if(requestCode == REQUEST_ENABLE_BT){
             if(resultCode==RESULT_OK){
-                startActivity(new Intent(this, ListarDispositivosActivity.class));
+                //verifica se existe um certificado válido
+                if (caminhoCert == null){
+                    status = "O Certificado escolhido não existe, por favor selecione um certificado válido";
+                    Toast.makeText(this, status, Toast.LENGTH_LONG).show();
+                } else if (!new File (caminhoCert).exists()) {
+                    status = "Certificado não selecionado, por favor selecione um certificado";
+                    Toast.makeText(this, status, Toast.LENGTH_LONG).show();
+                } else {
+                    startActivity(new Intent(this, ListarDispositivosActivity.class));
+                }
             }else{
                 Toast.makeText(MainActivity.this, "Está aplicação necessita do Bluetooth ativo para funcionar", Toast.LENGTH_LONG).show();
             }
