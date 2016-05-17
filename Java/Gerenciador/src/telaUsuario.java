@@ -130,10 +130,10 @@ public class telaUsuario extends javax.swing.JFrame {
                 retorno = false;
             }
             
-            if (txtEmail.getText().equals("")){
-                JOptionPane.showMessageDialog(null, "O campo E-mail não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
-                retorno = false;
-            }
+            //if (txtEmail.getText().equals("")){
+                //JOptionPane.showMessageDialog(null, "O campo E-mail não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                //retorno = false;
+            //}
             
             retorno = jTable2.getSelectedRows().length > 0;
             
