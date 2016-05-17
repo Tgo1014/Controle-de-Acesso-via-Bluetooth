@@ -1,4 +1,3 @@
-
 import java.awt.Color;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -6,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-
 
 public class menuInicial extends javax.swing.JFrame {
 
@@ -25,9 +23,10 @@ public class menuInicial extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setAlwaysOnTop(true);
         setResizable(false);
 
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("USUÁRIOS");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -35,6 +34,8 @@ public class menuInicial extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("DISPOSITIVOS");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -42,6 +43,8 @@ public class menuInicial extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("GRUPOS");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -49,6 +52,8 @@ public class menuInicial extends javax.swing.JFrame {
             }
         });
 
+        jButton5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(255, 255, 255));
         jButton5.setText("SMARTPHONES");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -87,42 +92,44 @@ public class menuInicial extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        this.dispose();  
-        try { 
+        this.dispose();
+        try {
             new telaUsuario().setVisible(true);
         } catch (SQLException ex) {
-            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        this.dispose();  
-        try { 
+        this.dispose();
+        try {
             new telaGrupo().setVisible(true);
         } catch (ParseException ex) {
-            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        this.dispose();  
-        try { 
+        this.dispose();
+        try {
             new telaDispositivos().setVisible(true);
         } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        this.dispose();  
-        try { 
+        this.dispose();
+        try {
             new telaSmartphones().setVisible(true);
         } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton5ActionPerformed

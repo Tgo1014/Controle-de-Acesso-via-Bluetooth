@@ -16,7 +16,7 @@ public class ConexaoMySQL {
     }
 
     //Método de Conexão//
-    public static Connection getConexaoMySQL() {
+    public static Connection getConexaoMySQL() throws SQLException, ClassNotFoundException {
 
         Connection connection = null; //atributo do tipo Connection
 
@@ -47,11 +47,11 @@ public class ConexaoMySQL {
         } catch (ClassNotFoundException e) {  
             //Driver não encontrado
             System.out.println("O driver expecificado nao foi encontrado.");
-            return null;
+            throw e;
         } catch (SQLException e) {
             //Não conseguindo se conectar ao banco
             System.out.println("Nao foi possivel conectar ao Banco de Dados.");
-            return null;
+            throw e;
         }
 
     }
@@ -62,17 +62,17 @@ public class ConexaoMySQL {
     }
 
     //Método que fecha sua conexão//
-    public static boolean FecharConexao() {
+    public static boolean FecharConexao() throws ClassNotFoundException, SQLException {
         try {
             ConexaoMySQL.getConexaoMySQL().close();
             return true;
         } catch (SQLException e) {
-            return false;
+            throw e;
         }
     }
 
     //Método que reinicia sua conexão//
-    public static Connection ReiniciarConexao() {
+    public static Connection ReiniciarConexao() throws ClassNotFoundException, SQLException {
         FecharConexao();
         return ConexaoMySQL.getConexaoMySQL();
     }

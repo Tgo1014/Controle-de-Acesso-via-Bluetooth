@@ -10,11 +10,29 @@ public class Grupo {
     private String NM_GRUPO;
     private Date DT_INICIO_ACESSO;
     private Date DT_FIM_ACESSO;
+    private String data_inicio;
+    private String data_fim;
     private Time HR_INICIO_ACESSO;
     private Time HR_FIM_ACESSO;
     
     public Grupo(){
         
+    }
+
+    public String getData_inicio() {
+        return data_inicio;
+    }
+
+    public void setData_inicio(String data_inicio) {
+        this.data_inicio = data_inicio;
+    }
+
+    public String getData_fim() {
+        return data_fim;
+    }
+
+    public void setData_fim(String data_fim) {
+        this.data_fim = data_fim;
     }
 
     public int getID_GRUPO() {

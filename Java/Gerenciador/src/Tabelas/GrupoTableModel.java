@@ -40,8 +40,8 @@ public class GrupoTableModel extends AbstractTableModel  {
             case 1: return dados.get(linha).getNM_GRUPO();
             case 2: return dados.get(linha).getHR_INICIO_ACESSO();
             case 3: return dados.get(linha).getHR_FIM_ACESSO();
-            case 4: return dados.get(linha).getDT_INICIO_ACESSO();
-            case 5: return dados.get(linha).getDT_FIM_ACESSO();
+            case 4: return dados.get(linha).getData_inicio();
+            case 5: return dados.get(linha).getData_fim();
         }   
         return null;
     }

@@ -6,9 +6,18 @@ public class Usuario {
     private int ID_USUARIO;
     private String NM_USUARIO;
     private String CERTIFICADO;
+    private String EMAIL;
     
     public Usuario() {
         
+    }
+
+    public String getEMAIL() {
+        return EMAIL;
+    }
+
+    public void setEMAIL(String EMAIL) {
+        this.EMAIL = EMAIL;
     }
 
     public int getID_USUARIO() {

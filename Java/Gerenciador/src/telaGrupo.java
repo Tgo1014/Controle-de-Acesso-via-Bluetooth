@@ -1,4 +1,3 @@
-
 import ClassesDAO.GrupoDAO;
 import Tabelas.Grupo;
 import Tabelas.GrupoTableModel;
@@ -14,47 +13,39 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 
-
 public class telaGrupo extends javax.swing.JFrame {
 
-    public telaGrupo() throws ParseException, SQLException {
-        initComponents();
-        this.setLocationRelativeTo(null);     
-        pGrupos.setVisible(false);
-        sbCarregarGridGrupo();
-    }
-    
-    public void sbCarregarGridGrupo() throws SQLException, ParseException {
-
-        GrupoTableModel modelo = new GrupoTableModel();
-        GrupoDAO user = new GrupoDAO();
-
-        ArrayList<Grupo> dados = user.buscarDados();
-
-        for (Grupo g : dados) {
-            modelo.addRow(g);
+    public telaGrupo() throws ParseException, SQLException, ClassNotFoundException {
+        try {
+            initComponents();
+            this.setLocationRelativeTo(null);
+            pGrupos.setVisible(false);
+            sbCarregarGridGrupo();
+        } catch (Exception ex) {
+            throw ex;
         }
-        
-        for (int i=0; i< modelo.getRowCount();i++){
-            modelo.setValueAt(fnConversorData(modelo.getValueAt(i, 4).toString()), i, 4);
-            modelo.setValueAt(fnConversorData(modelo.getValueAt(i, 5).toString()), i, 5);
+    }
+
+    public void sbCarregarGridGrupo() throws SQLException, ParseException, ClassNotFoundException {
+
+        try {
+
+            GrupoTableModel modelo = new GrupoTableModel();
+            GrupoDAO user = new GrupoDAO();
+
+            ArrayList<Grupo> dados = user.buscarDados();
+
+            for (Grupo g : dados) {
+                modelo.addRow(g);
+            }
+
+            jTable1.setModel(modelo);
+            jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        } catch (Exception ex) {
+            throw ex;
         }
 
-        jTable1.setModel(modelo);
-        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-    }
-    
-    public String fnConversorData(String data){
-        
-        String valor[] = data.split("-");
-        
-        String ano = valor[0].trim();
-        String mes = valor[2].trim();
-        String dia = valor[1].trim();
-        
-        return dia + "/" + mes + "/" + ano;
-        
     }
 
     @SuppressWarnings("unchecked")
@@ -274,8 +265,8 @@ public class telaGrupo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
-        this.dispose();  
-        new menuInicial().setVisible(true); 
+        this.dispose();
+        new menuInicial().setVisible(true);
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
@@ -292,27 +283,27 @@ public class telaGrupo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        
+
         try {
-            
+
             Grupo grupo = new Grupo();
-            
+
             String dataInicio = txtDataInicio.getText();
             String dataFim = txtDataFim.getText();
             String horaInicio = txtHoraInicio.getText();
             String horaFim = txtHoraFim.getText();
-            
+
             DateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
-            
+
             DateFormat fData = new SimpleDateFormat("dd/MM/yyyy");
             DateFormat fHora = new SimpleDateFormat("hh:mm");
-            
+
             Date dateInicio = new Date(fData.parse(dataInicio).getTime());
             Date dateFim = new Date(fData.parse(dataFim).getTime());
-            
+
             Time timeInicio = new Time(fHora.parse(horaInicio).getTime());
             Time timeFim = new Time(fHora.parse(horaFim).getTime());
-            
+
             grupo.setNM_GRUPO(txtNome.getText());
             grupo.setDT_INICIO_ACESSO(dateInicio);
             grupo.setDT_FIM_ACESSO(dateFim);
@@ -321,20 +312,23 @@ public class telaGrupo extends javax.swing.JFrame {
 
             GrupoDAO g = new GrupoDAO();
             g.inserirDados(grupo);
-            
+
             JOptionPane.showMessageDialog(null, "Grupo inserido com Sucesso!", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
-            
+
             pGrupos.setVisible(false);
             sbCarregarGridGrupo();
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(telaUsuario.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         } catch (ParseException ex) {
             Logger.getLogger(telaGrupo.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(telaGrupo.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
-        
+
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     /**
@@ -372,6 +366,8 @@ public class telaGrupo extends javax.swing.JFrame {
                 } catch (ParseException ex) {
                     Logger.getLogger(telaGrupo.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
+                    Logger.getLogger(telaGrupo.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
                     Logger.getLogger(telaGrupo.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

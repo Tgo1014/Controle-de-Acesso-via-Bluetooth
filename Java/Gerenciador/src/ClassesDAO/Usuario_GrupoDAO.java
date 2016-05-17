@@ -1,4 +1,3 @@
-
 package ClassesDAO;
 
 import Tabelas.Usuario_Grupo;
@@ -8,22 +7,29 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Usuario_GrupoDAO {
-    
-    public void inserirDados(Usuario_Grupo ug) throws SQLException {
 
-        Connection connection = ConexaoMySQL.getConexaoMySQL();
+    public void inserirDados(Usuario_Grupo ug) throws SQLException, ClassNotFoundException {
 
-        String sql = "INSERT INTO TB_USUARIOS_has_TB_GRUPOS (TB_USUARIOS_ID_USUARIO, TB_GRUPOS_ID_GRUPO) values (?,?);";
+        try {
 
-        PreparedStatement stmt = connection.prepareStatement(sql);
+            Connection connection = ConexaoMySQL.getConexaoMySQL();
 
-        stmt.setInt(1, ug.getID_USUARIO());
-        stmt.setInt(2, ug.getID_GRUPO());
-        
-        stmt.execute();
+            String sql = "INSERT INTO TB_USUARIOS_has_TB_GRUPOS (TB_USUARIOS_ID_USUARIO, TB_GRUPOS_ID_GRUPO) values (?,?);";
 
-        connection.close();
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, ug.getID_USUARIO());
+            stmt.setInt(2, ug.getID_GRUPO());
+
+            stmt.execute();
+
+            connection.close();
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir Usuario_Grupo: " + e.getMessage());
+            throw e;
+        }
 
     }
-    
+
 }
