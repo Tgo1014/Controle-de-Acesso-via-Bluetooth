@@ -11,6 +11,7 @@ import javax.swing.ListSelectionModel;
 import Certificados.Certificado;
 import ClassesDAO.GrupoDAO;
 import ClassesDAO.Usuario_GrupoDAO;
+import Email.splashEmail;
 import Tabelas.Grupo;
 import Tabelas.GrupoTableModel;
 import Tabelas.Usuario_Grupo;
@@ -20,74 +21,128 @@ import java.security.cert.CertificateEncodingException;
 
 public class telaUsuario extends javax.swing.JFrame {
 
-    public telaUsuario() throws SQLException {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        pUsuarios.setVisible(false);
-        sbCarregarGridUsuario();
-        sbCarregarGridGrupo();
+    public telaUsuario() throws SQLException, Exception {
+
+        try {
+
+            initComponents();
+            this.setLocationRelativeTo(null);
+            pUsuarios.setVisible(false);
+            sbCarregarGridUsuario();
+            sbCarregarGridGrupo();
+
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
+        }
+
     }
 
     public String sbGerarCertificado(String nome) throws IOException, CertificateEncodingException, ClassNotFoundException {
 
-        //gera um certificado com o nome 
-        X509Certificate cert = Certificado.geraCertificado("Anhembi Morumbi - " + nome);
+        try {
 
-        //Extrai o certificado para área de trabalho no formato .cer
-        Certificado.extraiCertificado(cert);
+            //gera um certificado com o nome 
+            X509Certificate cert = Certificado.geraCertificado("Anhembi Morumbi - " + nome);
 
-        //Códifica o certificado para base64 para ser salvo no banco de dados
-        String StringCert64 = Certificado.certParaBase64(cert);
-        System.out.println(StringCert64);
+            //Extrai o certificado para área de trabalho no formato .cer
+            Certificado.extraiCertificado(cert);
 
-        //Usa string para gerar um certificado
-        //X509Certificate cert64 = Certificado.base64ParaCert(StringCert64);
+            //Códifica o certificado para base64 para ser salvo no banco de dados
+            String StringCert64 = Certificado.certParaBase64(cert);
+            System.out.println(StringCert64);
 
-        //Extrai o certificado gerado pela String
-        //Certificado.extraiCertificado(cert64, "CertificadoBase64");
+            //Usa string para gerar um certificado
+            //X509Certificate cert64 = Certificado.base64ParaCert(StringCert64);
+            //Extrai o certificado gerado pela String
+            //Certificado.extraiCertificado(cert64, "CertificadoBase64");
+            return StringCert64;
 
-        return StringCert64;
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
+        }
 
     }
 
-    public void sbCarregarGridUsuario() throws SQLException {
+    public void sbCarregarGridUsuario() throws SQLException, ClassNotFoundException {
 
-        UsuarioTableModel modelo = new UsuarioTableModel();
-        UsuarioDAO user = new UsuarioDAO();
+        try {
 
-        ArrayList<Usuario> dados = user.buscarDados();
+            UsuarioTableModel modelo = new UsuarioTableModel();
+            UsuarioDAO user = new UsuarioDAO();
 
-        for (Usuario u : dados) {
-            modelo.addRow(u);
+            ArrayList<Usuario> dados = user.buscarDados();
+
+            for (Usuario u : dados) {
+                modelo.addRow(u);
+            }
+
+            jTable1.setModel(modelo);
+            jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
         }
-
-        jTable1.setModel(modelo);
-        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
     }
 
-    public void sbCarregarGridGrupo() throws SQLException {
+    public void sbCarregarGridGrupo() throws SQLException, Exception {
 
-        GrupoTableModel modelo = new GrupoTableModel();
-        GrupoDAO user = new GrupoDAO();
+        try {
 
-        ArrayList<Grupo> dados = user.buscarDados();
+            GrupoTableModel modelo = new GrupoTableModel();
+            GrupoDAO user = new GrupoDAO();
 
-        for (Grupo g : dados) {
-            modelo.addRow(g);
+            ArrayList<Grupo> dados = user.buscarDados();
+
+            for (Grupo g : dados) {
+                modelo.addRow(g);
+            }
+
+            jTable2.setModel(modelo);
+            jTable2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
         }
-
-        jTable2.setModel(modelo);
-        jTable2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
     }
 
     public boolean isGrupo() {
-        return jTable2.getRowCount() > 0;
+        try {
+            return jTable2.getRowCount() > 0;
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
+        }
     }
 
     public boolean fnValida() {
-        return jTable2.getSelectedRows().length > 0;
+        try {
+            
+            Boolean retorno = true;
+            
+            if (txtNome.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "O campo Nome não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                retorno = false;
+            }
+            
+            if (txtEmail.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "O campo E-mail não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                retorno = false;
+            }
+            
+            retorno = jTable2.getSelectedRows().length > 0;
+            
+            return retorno;
+            
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -105,6 +160,8 @@ public class telaUsuario extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
+        txtEmail = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
         btnVoltar = new javax.swing.JButton();
         btnAdicionar = new javax.swing.JButton();
 
@@ -164,24 +221,33 @@ public class telaUsuario extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jTable2);
 
+        jLabel4.setText("Email:");
+
         javax.swing.GroupLayout pUsuariosLayout = new javax.swing.GroupLayout(pUsuarios);
         pUsuarios.setLayout(pUsuariosLayout);
         pUsuariosLayout.setHorizontalGroup(
             pUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pUsuariosLayout.createSequentialGroup()
+            .addGroup(pUsuariosLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(pUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2)
+                .addGroup(pUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pUsuariosLayout.createSequentialGroup()
+                        .addGroup(pUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2)
+                            .addGroup(pUsuariosLayout.createSequentialGroup()
+                                .addGroup(pUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                                .addComponent(btnCancelar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnCadastrar)))
+                        .addGap(24, 24, 24))
                     .addGroup(pUsuariosLayout.createSequentialGroup()
                         .addGroup(pUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                        .addComponent(btnCancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCadastrar)))
-                .addGap(24, 24, 24))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         pUsuariosLayout.setVerticalGroup(
             pUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,10 +259,14 @@ public class telaUsuario extends javax.swing.JFrame {
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCadastrar)
                     .addComponent(btnCancelar))
+                .addGap(5, 5, 5)
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
@@ -229,7 +299,7 @@ public class telaUsuario extends javax.swing.JFrame {
                         .addComponent(btnVoltar))
                     .addComponent(jScrollPane1)
                     .addComponent(pUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -253,18 +323,27 @@ public class telaUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
-        this.dispose();
-        new menuInicial().setVisible(true);
+        try {
+            this.dispose();
+            new menuInicial().setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        if (isGrupo()) {
-            pUsuarios.setVisible(true);
-            txtNome.setText("");
-        } else {
-            JOptionPane.showMessageDialog(null, "É necessário ter pelo menos um Grupo Cadastrado\nPara Cadastrar um Usuário", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            new menuInicial().setVisible(true);
+        try {
+            if (isGrupo()) {
+                pUsuarios.setVisible(true);
+                txtNome.setText("");
+                txtEmail.setText("");
+            } else {
+                JOptionPane.showMessageDialog(null, "É necessário ter pelo menos um Grupo Cadastrado\nPara Cadastrar um Usuário", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                this.dispose();
+                new menuInicial().setVisible(true);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
@@ -281,26 +360,31 @@ public class telaUsuario extends javax.swing.JFrame {
                 Usuario user = new Usuario();
                 user.setNM_USUARIO(txtNome.getText());
                 user.setCERTIFICADO(sbGerarCertificado(txtNome.getText()));
+                user.setEMAIL(txtEmail.getText());
 
                 UsuarioDAO u = new UsuarioDAO();
                 int ID_USUARIO = u.inserirDadosRetID(user);
-                
-                for (int i=0; i<jTable2.getSelectedRows().length;i++){
-                    
+
+                for (int i = 0; i < jTable2.getSelectedRows().length; i++) {
+
                     int linhas[] = jTable2.getSelectedRows();
                     int ID_GRUPO = Integer.parseInt(jTable2.getValueAt(linhas[i], 0).toString());
-                    
+
                     Usuario_Grupo ug = new Usuario_Grupo();
                     ug.setID_GRUPO(ID_GRUPO);
                     ug.setID_USUARIO(ID_USUARIO);
-                    
+
                     Usuario_GrupoDAO ugDAO = new Usuario_GrupoDAO();
                     ugDAO.inserirDados(ug);
-                    
+
                 }
-                
-                Email.Email.enviaEmail("taraujodesouza@gmail.com", new File(System.getProperty("user.home") + File.separator + "Desktop\\Certificado.cer"));
-                
+
+                if (!txtEmail.getText().equals("")){
+                    Email.Email.enviaEmail(txtEmail.getText(), new File(System.getProperty("user.home") + File.separator + "Desktop\\" + txtNome.getText() + ".cer"), txtNome.getText());
+                } else {
+                    sbGerarCertificado(txtNome.getText());
+                }
+
                 JOptionPane.showMessageDialog(null, "Usuário inserido com Sucesso!", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
 
                 pUsuarios.setVisible(false);
@@ -323,6 +407,8 @@ public class telaUsuario extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(telaUsuario.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            Logger.getLogger(telaUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_btnCadastrarActionPerformed
@@ -360,6 +446,9 @@ public class telaUsuario extends javax.swing.JFrame {
                 try {
                     new telaUsuario().setVisible(true);
                 } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+                    Logger.getLogger(telaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
                     Logger.getLogger(telaUsuario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -375,11 +464,13 @@ public class telaUsuario extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JPanel pUsuarios;
+    private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }

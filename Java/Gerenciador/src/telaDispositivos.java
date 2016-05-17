@@ -1,4 +1,3 @@
-
 import ClassesDAO.DispositivoDAO;
 import ClassesDAO.Dispositivo_GrupoDAO;
 import ClassesDAO.GrupoDAO;
@@ -14,46 +13,61 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 
-
 public class telaDispositivos extends javax.swing.JFrame {
 
-    public telaDispositivos() throws SQLException {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        pDispositivos.setVisible(false);
-        sbCarregarGridGrupo();
-        sbCarregarGridDispositivo();
+    public telaDispositivos() throws SQLException, Exception {
+        try {
+            initComponents();
+            this.setLocationRelativeTo(null);
+            pDispositivos.setVisible(false);
+            sbCarregarGridGrupo();
+            sbCarregarGridDispositivo();
+        } catch (Exception ex) {
+            throw ex;
+        }
     }
-    
-    public void sbCarregarGridDispositivo() throws SQLException {
 
-        DispositivoTableModel modelo = new DispositivoTableModel();
-        DispositivoDAO dispositivo = new DispositivoDAO();
+    public void sbCarregarGridDispositivo() throws SQLException, Exception {
 
-        ArrayList<Dispositivo> dados = dispositivo.buscarDados();
+        try {
 
-        for (Dispositivo d : dados) {
-            modelo.addRow(d);
+            DispositivoTableModel modelo = new DispositivoTableModel();
+            DispositivoDAO dispositivo = new DispositivoDAO();
+
+            ArrayList<Dispositivo> dados = dispositivo.buscarDados();
+
+            for (Dispositivo d : dados) {
+                modelo.addRow(d);
+            }
+
+            jTable1.setModel(modelo);
+            jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        } catch (Exception ex) {
+            throw ex;
         }
 
-        jTable1.setModel(modelo);
-        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
     }
-    
-    public void sbCarregarGridGrupo() throws SQLException {
 
-        GrupoTableModel modelo = new GrupoTableModel();
-        GrupoDAO user = new GrupoDAO();
+    public void sbCarregarGridGrupo() throws SQLException, Exception {
 
-        ArrayList<Grupo> dados = user.buscarDados();
+        try {
 
-        for (Grupo g : dados) {
-            modelo.addRow(g);
+            GrupoTableModel modelo = new GrupoTableModel();
+            GrupoDAO user = new GrupoDAO();
+
+            ArrayList<Grupo> dados = user.buscarDados();
+
+            for (Grupo g : dados) {
+                modelo.addRow(g);
+            }
+
+            jTable2.setModel(modelo);
+            jTable2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        } catch (Exception ex) {
+            throw ex;
         }
-
-        jTable2.setModel(modelo);
-        jTable2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
     }
 
@@ -62,7 +76,30 @@ public class telaDispositivos extends javax.swing.JFrame {
     }
 
     public boolean fnValida() {
-        return jTable2.getSelectedRows().length > 0;
+        
+        try {
+            
+            Boolean retorno = true;
+            
+            if (txtNome.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "O campo Nome não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                retorno = false;
+            }
+            
+            if (txtMAC.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "O campo MAC não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                retorno = false;
+            }
+            
+            retorno = jTable2.getSelectedRows().length > 0;
+            
+            return retorno;
+            
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
+        }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -237,24 +274,33 @@ public class telaDispositivos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        if (isGrupo()) {
-            pDispositivos.setVisible(true);
-            txtNome.setText("");
-            txtMAC.setText("");
-        } else {
-            JOptionPane.showMessageDialog(null, "É necessário ter pelo menos um Grupo Cadastrado\nPara Cadastrar um Dispositivo", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            new menuInicial().setVisible(true);
+        try {
+
+            if (isGrupo()) {
+                pDispositivos.setVisible(true);
+                txtNome.setText("");
+                txtMAC.setText("");
+            } else {
+                JOptionPane.showMessageDialog(null, "É necessário ter pelo menos um Grupo Cadastrado\nPara Cadastrar um Dispositivo", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                this.dispose();
+                new menuInicial().setVisible(true);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
-        this.dispose();  
-        new menuInicial().setVisible(true); 
+        try {
+            this.dispose();
+            new menuInicial().setVisible(true);
+        } catch (Exception ex) {
+            throw ex;
+        }
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        
+
         try {
 
             if (fnValida()) {
@@ -265,21 +311,21 @@ public class telaDispositivos extends javax.swing.JFrame {
 
                 DispositivoDAO d = new DispositivoDAO();
                 int ID_DISPOSITIVO = d.inserirDadosRetID(dispositivo);
-                
-                for (int i=0; i<jTable2.getSelectedRows().length;i++){
-                    
+
+                for (int i = 0; i < jTable2.getSelectedRows().length; i++) {
+
                     int linhas[] = jTable2.getSelectedRows();
                     int ID_GRUPO = Integer.parseInt(jTable2.getValueAt(linhas[i], 0).toString());
-                    
+
                     Dispositivo_Grupo dg = new Dispositivo_Grupo();
                     dg.setTB_DISPOSITIVOS_ID_DISPOSITIVO(ID_DISPOSITIVO);
                     dg.setTB_GRUPOS_ID_GRUPO(ID_GRUPO);
-                    
+
                     Dispositivo_GrupoDAO dgDAO = new Dispositivo_GrupoDAO();
                     dgDAO.inserirDados(dg);
-                    
+
                 }
-                
+
                 JOptionPane.showMessageDialog(null, "Dispositivo inserido com Sucesso!", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
 
                 pDispositivos.setVisible(false);
@@ -293,8 +339,14 @@ public class telaDispositivos extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(telaUsuario.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(telaDispositivos.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            Logger.getLogger(telaDispositivos.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
-                
+
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -337,6 +389,8 @@ public class telaDispositivos extends javax.swing.JFrame {
                 try {
                     new telaDispositivos().setVisible(true);
                 } catch (SQLException ex) {
+                    Logger.getLogger(telaDispositivos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
                     Logger.getLogger(telaDispositivos.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

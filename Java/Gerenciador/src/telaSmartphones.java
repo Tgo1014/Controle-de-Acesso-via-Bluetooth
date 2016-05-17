@@ -14,56 +14,101 @@ import javax.swing.ListSelectionModel;
 
 public class telaSmartphones extends javax.swing.JFrame {
 
-    public telaSmartphones() throws SQLException {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        pSmartphone.setVisible(false);
-        sbCarregarCombo();
-        sbCarregarGridSmartphone();
-    }
-
-    public boolean isUsuario() throws SQLException {
-
-        UsuarioDAO user = new UsuarioDAO();
-        ArrayList<Usuario> lista = user.buscarDados();
-
-        return !lista.isEmpty();
-
-    }
-
-    public void sbCarregarGridSmartphone() throws SQLException {
-
-        SmartTableModel modelo = new SmartTableModel();
-        SmartphoneDAO s = new SmartphoneDAO();
-
-        ArrayList<Smartphone> dados = s.buscarDados();
-
-        for (Smartphone smart : dados) {
-            modelo.addRow(smart);
+    public telaSmartphones() throws SQLException, Exception {
+        try {
+            initComponents();
+            this.setLocationRelativeTo(null);
+            pSmartphone.setVisible(false);
+            sbCarregarCombo();
+            sbCarregarGridSmartphone();
+        } catch (Exception e) {
+            throw e;
         }
-
-        jTable1.setModel(modelo);
-        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
     }
 
-    public void sbCarregarCombo() throws SQLException {
+    public boolean isUsuario() throws SQLException, Exception {
 
-        ddlUsuario.removeAllItems();
+        try {
 
-        UsuarioDAO user = new UsuarioDAO();
-        ArrayList<Usuario> lista = user.buscarDados();
+            UsuarioDAO user = new UsuarioDAO();
+            ArrayList<Usuario> lista = user.buscarDados();
 
-        ddlUsuario.addItem("Selecione");
+            return !lista.isEmpty();
 
-        for (Usuario u : lista) {
-            ddlUsuario.addItem(new ComboItem(u.getID_USUARIO(), u.getNM_USUARIO()));
+        } catch (Exception e) {
+            throw e;
         }
 
     }
-    
-    public boolean fnValidar(){
-        return ddlUsuario.getSelectedIndex() > 0;
+
+    public void sbCarregarGridSmartphone() throws SQLException, Exception {
+
+        try {
+
+            SmartTableModel modelo = new SmartTableModel();
+            SmartphoneDAO s = new SmartphoneDAO();
+
+            ArrayList<Smartphone> dados = s.buscarDados();
+
+            for (Smartphone smart : dados) {
+                modelo.addRow(smart);
+            }
+
+            jTable1.setModel(modelo);
+            jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        } catch (Exception e) {
+            throw e;
+        }
+
+    }
+
+    public void sbCarregarCombo() throws SQLException, Exception {
+
+        try {
+
+            ddlUsuario.removeAllItems();
+
+            UsuarioDAO user = new UsuarioDAO();
+            ArrayList<Usuario> lista = user.buscarDados();
+
+            ddlUsuario.addItem("Selecione");
+
+            for (Usuario u : lista) {
+                ddlUsuario.addItem(new ComboItem(u.getID_USUARIO(), u.getNM_USUARIO()));
+            }
+
+        } catch (Exception e) {
+            throw e;
+        }
+
+    }
+
+    public boolean fnValidar() {
+        
+        try {
+            
+            Boolean retorno = true;
+            
+            if (txtICCID.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "O campo ICCID não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                retorno = false;
+            }
+            
+            if (txtIMEI.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "O campo IMEI não pode ficar em branco!", "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+                retorno = false;
+            }
+            
+            retorno = ddlUsuario.getSelectedIndex() > 0;
+            
+            return retorno;
+            
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+            throw e;
+        }
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -170,11 +215,11 @@ public class telaSmartphones extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                .addGroup(pSmartphoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ddlUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pSmartphoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pSmartphoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnCadastrar)
-                        .addComponent(btnCancelar)))
+                        .addComponent(btnCancelar))
+                    .addComponent(ddlUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21))
         );
 
@@ -234,8 +279,8 @@ public class telaSmartphones extends javax.swing.JFrame {
                 this.dispose();
                 new menuInicial().setVisible(true);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(telaSmartphones.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
@@ -274,7 +319,7 @@ public class telaSmartphones extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Selecione um Usuário Válido!", "Atençao!", JOptionPane.INFORMATION_MESSAGE);
             }
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(telaUsuario.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
@@ -317,6 +362,8 @@ public class telaSmartphones extends javax.swing.JFrame {
                 try {
                     new telaSmartphones().setVisible(true);
                 } catch (SQLException ex) {
+                    Logger.getLogger(telaSmartphones.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
                     Logger.getLogger(telaSmartphones.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

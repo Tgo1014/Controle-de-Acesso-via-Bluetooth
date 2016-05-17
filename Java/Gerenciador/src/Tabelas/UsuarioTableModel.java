@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 public class UsuarioTableModel extends AbstractTableModel {
 
     private ArrayList<Usuario> dados;
-    private String[] colunas = {"Usuário"};
+    private String[] colunas = {"Usuário", "E-mail"};
      
     public UsuarioTableModel(){
         dados = new ArrayList();
@@ -37,6 +37,7 @@ public class UsuarioTableModel extends AbstractTableModel {
     public Object getValueAt(int linha, int coluna) {
         switch(coluna){
             case 0: return dados.get(linha).getNM_USUARIO();
+            case 1: return dados.get(linha).getEMAIL();
         }   
         return null;
     }

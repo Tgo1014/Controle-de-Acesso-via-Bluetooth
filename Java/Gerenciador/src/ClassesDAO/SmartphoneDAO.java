@@ -1,4 +1,3 @@
-
 package ClassesDAO;
 
 import Tabelas.Smartphone;
@@ -11,36 +10,43 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class SmartphoneDAO {
-    
-    public void inserirDados(Smartphone s) throws SQLException {
 
-        Connection connection = ConexaoMySQL.getConexaoMySQL();
-
-        String sql = "INSERT INTO TB_SMARTPHONE (IMEI, ICCID, TB_USUARIOS_ID_USUARIO) values (?,?,?);";
-
-        PreparedStatement stmt = connection.prepareStatement(sql);
-
-        stmt.setString(1, s.getIMEI());
-        stmt.setString(2, s.getICCID());
-        stmt.setInt(3, s.getID_USUARIO());
-        
-        stmt.execute();
-
-        connection.close();
-
-    }
-    
-    public ArrayList<Smartphone> buscarDados() throws SQLException {
-
-        Connection connection = ConexaoMySQL.getConexaoMySQL();
-        ArrayList<Smartphone> resultados = new ArrayList();
-
-        ResultSet rs;
-
-        String sql = "SELECT s.IMEI, s.ICCID, u.NM_USUARIO FROM TB_SMARTPHONE s INNER JOIN TB_USUARIOS u ON u.ID_USUARIO = s.TB_USUARIOS_ID_USUARIO;";
-        PreparedStatement stmt = connection.prepareStatement(sql);
+    public void inserirDados(Smartphone s) throws SQLException, ClassNotFoundException {
 
         try {
+
+            Connection connection = ConexaoMySQL.getConexaoMySQL();
+
+            String sql = "INSERT INTO TB_SMARTPHONE (IMEI, ICCID, TB_USUARIOS_ID_USUARIO) values (?,?,?);";
+
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setString(1, s.getIMEI());
+            stmt.setString(2, s.getICCID());
+            stmt.setInt(3, s.getID_USUARIO());
+
+            stmt.execute();
+
+            connection.close();
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar smartphone: " + e.getMessage());
+            throw e;
+        }
+
+    }
+
+    public ArrayList<Smartphone> buscarDados() throws SQLException, ClassNotFoundException {
+
+        try {
+
+            Connection connection = ConexaoMySQL.getConexaoMySQL();
+            ArrayList<Smartphone> resultados = new ArrayList();
+
+            ResultSet rs;
+
+            String sql = "SELECT s.IMEI, s.ICCID, u.NM_USUARIO FROM TB_SMARTPHONE s INNER JOIN TB_USUARIOS u ON u.ID_USUARIO = s.TB_USUARIOS_ID_USUARIO;";
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             rs = stmt.executeQuery();
 
@@ -56,10 +62,9 @@ public class SmartphoneDAO {
 
         } catch (SQLException e) {
             System.out.println("Erro ao buscar smartphone: " + e.getMessage());
-            return null;
+            throw e;
         }
 
     }
 
-    
 }
