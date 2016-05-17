@@ -16,9 +16,9 @@ import javax.swing.JOptionPane;
 
 public class Email {
 
-    public static void enviaEmail(String destinatario, File certificado, String nome) throws UnsupportedEncodingException, Exception {
+    public static void enviaEmail(final String destinatario, final File certificado, final String nome) throws UnsupportedEncodingException, Exception {
 
-        splashEmail sEmail = new splashEmail();
+        final splashEmail sEmail = new splashEmail();
 
         try {
 

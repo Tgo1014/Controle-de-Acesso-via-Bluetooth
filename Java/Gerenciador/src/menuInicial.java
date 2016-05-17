@@ -98,6 +98,8 @@ public class menuInicial extends javax.swing.JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -105,11 +107,10 @@ public class menuInicial extends javax.swing.JFrame {
         this.dispose();
         try {
             new telaGrupo().setVisible(true);
-        } catch (ParseException ex) {
+        } catch (ParseException | SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -121,6 +122,8 @@ public class menuInicial extends javax.swing.JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
             Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -130,6 +133,8 @@ public class menuInicial extends javax.swing.JFrame {
             new telaSmartphones().setVisible(true);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(menuInicial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton5ActionPerformed

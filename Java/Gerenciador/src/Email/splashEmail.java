@@ -1,5 +1,7 @@
 package Email;
 
+import org.xml.sax.Attributes;
+
 public class splashEmail extends javax.swing.JFrame {
 
     
