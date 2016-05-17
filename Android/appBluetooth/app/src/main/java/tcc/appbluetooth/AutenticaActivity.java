@@ -3,8 +3,10 @@ package tcc.appbluetooth;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -113,8 +115,11 @@ public class AutenticaActivity extends AppCompatActivity implements ControladorI
 
             case R.id.btnEnviaDados:
                 try {
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+                    String caminhoCert = pref.getString("CAMINHO_CERTIFICADO", null);
+
                     controlador.sendMessage(AUTENTICAR);
-                    controlador.sendMessage(smart, user, new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + nomeArquivoCertificado));
+                    controlador.sendMessage(smart, user, new File(caminhoCert));
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (CertificateException e) {

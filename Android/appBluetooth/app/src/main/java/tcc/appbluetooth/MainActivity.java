@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static int REQUEST_ENABLE_BT = 1;
     private final static int REQUEST_FILE = 2;
     String status;
+    String caminhoCert;
     Smartphone user = new Smartphone();
+    File certificado;
 
     //responsável por salvar o caminho do certificado, mesmo que a aplicação seja encerrada
 
@@ -62,12 +64,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user.setSIM_ID(tm.getSimSerialNumber());
 
         //requisita as variáveis que são guardadas mesmo que a aplicação seja encerrada
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("CAMINHO_CERTIFICADO",  MODE_PRIVATE);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         //Verifica se algum certificado já foi selecionado anteriormente
-        String caminho = pref.getString("CAMINHO_CERTIFICADO", null);
-        if (caminho == null){
+        caminhoCert = pref.getString("CAMINHO_CERTIFICADO", null);
+        if (caminhoCert == null){
             txtStatusCertificado.setText("Status: Certificado não selecionado");
+        } else if (!new File (caminhoCert).exists()){
+            txtStatusCertificado.setText("Status: Certificado removido");
+        } else {
+            txtStatusCertificado.setText("Status: Certificado OK");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //quando sair e voltar da aplicação, verifica novamente o status do certificado
+        TextView txtStatusCertificado = (TextView) findViewById(R.id.txtStatusCertificado);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        caminhoCert = pref.getString("CAMINHO_CERTIFICADO", null);
+
+        if (caminhoCert == null){
+            txtStatusCertificado.setText("Status: Certificado não selecionado");
+        } else if (!new File (caminhoCert).exists()){
+            txtStatusCertificado.setText("Status: Certificado removido");
         } else {
             txtStatusCertificado.setText("Status: Certificado OK");
         }
@@ -78,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         BluetoothAdapter adaptador = ConexaoBluetooth.adaptador();
 
         switch (v.getId()) {
+
             case R.id.btnBuscarDevice: {
                 //verifica se existe bluetooth no dispositivo
                 if (adaptador == null) {
@@ -91,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //se o bluetooth nao estiver ligado, solicita ao usuario que ligue
                         Intent habilitaBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(habilitaBluetooth, REQUEST_ENABLE_BT);
+                    } else if (!new File (caminhoCert).exists()){
+                        status = "O Certificado escolhido não existe, por favor selecione um certificado válido";
+                        Toast.makeText(this, status, Toast.LENGTH_LONG).show();
                     } else {
                         startActivity(new Intent(this, ListarDispositivosActivity.class));
                     }
@@ -119,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //aguarda resposta da ativação do Bluetooth
         if(requestCode == REQUEST_ENABLE_BT){
             if(resultCode==RESULT_OK){
                 startActivity(new Intent(this, ListarDispositivosActivity.class));
@@ -127,13 +154,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        //aguarda respsota da seleção de um certificado válido
         if (requestCode == REQUEST_FILE) {
             if (resultCode == RESULT_OK) {
+
+                //salva o caminho do certificado usando persistencia
                 String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-                // Do anything with file
+
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("CAMINHO_CERTIFICADO", filePath);
+                editor.commit();
+
+                //Atualiza o status do certificado na tela principal
+                TextView btn = (TextView) findViewById(R.id.txtStatusCertificado);
+                btn.setText("Certificado OK");
+
+                certificado = new File (filePath);
+
             } else {
                 Toast.makeText(MainActivity.this, "Cancelado", Toast.LENGTH_LONG).show();
             }
+
         }
 
     }
