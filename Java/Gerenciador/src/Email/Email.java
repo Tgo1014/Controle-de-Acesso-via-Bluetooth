@@ -59,7 +59,7 @@ public class Email {
                         Multipart multipart = new MimeMultipart();
 
                         messageBodyPart = new MimeBodyPart();
-                        String fileName = nome + ".cer";
+                        String fileName = "Anhembi Morumbi - " + nome + ".cer";
                         DataSource source = new FileDataSource(certificado);
                         messageBodyPart.setDataHandler(new DataHandler(source));
                         messageBodyPart.setFileName(fileName);

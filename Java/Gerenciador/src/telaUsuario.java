@@ -38,33 +38,7 @@ public class telaUsuario extends javax.swing.JFrame {
 
     }
 
-    public String sbGerarCertificado(String nome) throws IOException, CertificateEncodingException, ClassNotFoundException {
-
-        try {
-
-            //gera um certificado com o nome 
-            X509Certificate cert = Certificado.geraCertificado("Anhembi Morumbi - " + nome);
-
-            //Extrai o certificado para área de trabalho no formato .cer
-            Certificado.extraiCertificado(cert);
-
-            //Códifica o certificado para base64 para ser salvo no banco de dados
-            String StringCert64 = Certificado.certParaBase64(cert);
-            System.out.println(StringCert64);
-
-            //Usa string para gerar um certificado
-            //X509Certificate cert64 = Certificado.base64ParaCert(StringCert64);
-            //Extrai o certificado gerado pela String
-            //Certificado.extraiCertificado(cert64, "CertificadoBase64");
-            return StringCert64;
-
-        } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
-            throw e;
-        }
-
-    }
-
+    
     public void sbCarregarGridUsuario() throws SQLException, ClassNotFoundException {
 
         try {
@@ -316,7 +290,7 @@ public class telaUsuario extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(pUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setBounds(0, 0, 658, 614);
@@ -356,10 +330,13 @@ public class telaUsuario extends javax.swing.JFrame {
         try {
 
             if (fnValida()) {
+                
+                X509Certificate cert = Certificado.geraCertificado(txtNome.getText());
+                String cert64 = Certificado.certParaBase64(cert);
 
                 Usuario user = new Usuario();
                 user.setNM_USUARIO(txtNome.getText());
-                user.setCERTIFICADO(sbGerarCertificado(txtNome.getText()));
+                user.setCERTIFICADO(cert64);
                 user.setEMAIL(txtEmail.getText());
 
                 UsuarioDAO u = new UsuarioDAO();
@@ -380,9 +357,10 @@ public class telaUsuario extends javax.swing.JFrame {
                 }
 
                 if (!txtEmail.getText().equals("")){
-                    Email.Email.enviaEmail(txtEmail.getText(), new File(System.getProperty("user.home") + File.separator + "Desktop\\" + txtNome.getText() + ".cer"), txtNome.getText());
+                    Certificado.extraiCertificado(cert, "Anhembi Morumbi - " + txtNome.getText());
+                    Email.Email.enviaEmail(txtEmail.getText(), new File(System.getProperty("user.home") + File.separator + "Desktop\\" + "Anhembi Morumbi - " + txtNome.getText() + ".cer"), txtNome.getText());                    
                 } else {
-                    sbGerarCertificado(txtNome.getText());
+                    Certificado.extraiCertificado(cert, "Anhembi Morumbi - " + txtNome.getText());
                 }
 
                 JOptionPane.showMessageDialog(null, "Usuário inserido com Sucesso!", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
