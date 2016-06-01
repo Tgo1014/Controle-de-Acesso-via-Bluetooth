@@ -92,7 +92,7 @@ public class ListarDispositivosActivity extends AppCompatActivity implements Ada
                     //limpa dispositivos e adiciona todos novamente
                     listaDeDevices.clear();
                     listaDeDevices.add(device);
-                    Toast.makeText(context, "Encontrou: " + device.getName() + ":" + device.getAddress(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Encontrou: " + device.getName() + ":" + device.getAddress(), Toast.LENGTH_SHORT).show();
                     updateLista();
                     count++;
                 }

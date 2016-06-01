@@ -7,25 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class MySQL {
-
-	public MySQL() {
-		
-	}
-	
-	public static Connection connect(){
-		try {
-	        Class.forName("com.mysql.jdbc");
-	        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/tccanhembi", "tccanhembi", "tccanhembi");
-	        return con;
-	    }
-	    catch (ClassNotFoundException e) {
-	        System.out.println("Driver not found");
-	    }
-	    catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-		return null;
-	}
 	
 	public static boolean valida(String imei, String simid, String mac, String cert){
 		try {
