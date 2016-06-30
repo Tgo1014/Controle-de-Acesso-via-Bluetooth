@@ -29,7 +29,7 @@ public class ProcessConnectionThread implements Runnable {
     // Constante para receber os comandos via Android
     private static final int EXIT_CMD = -1;
     private static final int AUTENTICAR = 3;
-    private static final String MAC_ADRESS = "123456789987654321";
+    private static final String MAC_ADRESS = "123456789";
 
     Requisicao req = new Requisicao();
 
