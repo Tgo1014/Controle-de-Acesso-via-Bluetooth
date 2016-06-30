@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<title>Cadastro de Grupo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/bootstrap.js"></script>
+		<script type="text/javascript">
+		
+			function sbCarregarAlert(texto){
+				var div = $("<div class='alert alert-danger notificacao'>" + texto + "</div>");
+				$("body").prepend($(div));
+				window.setTimeout(function(){
+					$(div).remove();
+				}, 5000);
+			}
+		
+			function fnValidar(){
+				
+				var out = true;
+				var erro = "";
+				
+				if ($("#txtNome").val() == ""){
+					out = false;
+					erro += "O campo Nome não pode ficar em Branco!<br />"
+				}		
+				if ($("#txtMac").val() == ""){
+					out = false;
+					erro += "O campo MAC não pode ficar em Branco!<br />"
+				}		
+				if ($("#ddlGrupo option:selected").val() == "-1"){
+					out = false;
+					erro += "O campo Grupo não pode ficar em Branco!<br />"
+				}			
+				if (!out){
+					sbCarregarAlert(erro);
+				}
+				return out;
+				
+			}
+		
+			function sbSalvar(){
+				
+				if ($("#txtNome").attr("disabled") == "disabled"){
+					sbAtivarBotoes(true);
+				} else {	
+					if (fnValidar()){
+						sbProcessar($("#txtNome").val(), $("#txtHinicio").val(), $("#txtHfim").val(), $("#txtDinicio").val(), $("#txtDfim").val());
+					}		
+				}
+				
+			}
+		
+			function sbAtivarBotoes(flag){
+				if(!flag){
+					$("#txtNome").attr("disabled","disabled");
+					$("#txtHinicio").attr("disabled","disabled");
+					$("#txtHfim").attr("disabled","disabled");
+					$("#txtDinicio").attr("disabled","disabled");
+					$("#txtDfim").attr("disabled","disabled");
+					$("#btnSalvar").html("<i class='glyphicon glyphicon-floppy-disk mr-sm'></i>Cadastrar");
+				} else {
+					$("#txtNome").removeAttr("disabled");
+					$("#txtHinicio").removeAttr("disabled");
+					$("#txtHfim").removeAttr("disabled");
+					$("#txtDinicio").removeAttr("disabled");
+					$("#txtDfim").removeAttr("disabled");
+					$("#btnSalvar").html("<i class='glyphicon glyphicon-floppy-disk mr-sm'></i>Salvar");
+				}
+			}
+		
+			function sbLimpar(){
+				$("#txtNome").val("");
+				$("#txtMac").val("");	
+				$("#ddlGrupo").val("-1");	
+				sbAtivarBotoes(false);
+			}
+			
+			function sbProcessar(nome, hInicio, hFim, dInicio, dFim){
+			
+				$.ajax({
+	                type: "POST",
+	                contentType: "application/json; charset=utf-8",
+	                url: "http://localhost:8080/dispositivo/inserir/" + nome + "/" + hInicio + "/" + hFim + "/" + dInicio + "/" + dFim,
+	                dataType: "json",
+	                success: function () {
+	                    alert("Dispositivo Inserido com Sucesso!");
+	                    sbLimpar();
+	                    sbCarregarGrid();
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+		            
+			}
+	        
+	        function sbCarregarGrid(){
+	        	$.ajax({
+	                type: "GET",
+	                url: "http://localhost:8080/grupo/consulta/",
+	                dataType: "xml",
+	                success: function (xml) {
+	                
+	                	$("#tbGrupo > tbody").empty();
+	                
+	                    $(xml).find('Grupo').each(function () {  
+	                            
+	                        var id = $("<td>" + $(this).attr('id') + "</td>");          	  
+	                        var nome = $("<td>" + $(this).attr('nome') + "</td>");
+	                        var hInicio = $("<td>" + $(this).attr('hInicio') + "</td>");
+	                        var hFim = $("<td>" + $(this).attr('hFim') + "</td>");
+	                        var dInicio = $("<td>" + $(this).attr('dInicio') + "</td>");
+	                        var dFim = $("<td>" + $(this).attr('dFim') + "</td>");
+	                        var tr = $("<tr></tr");
+	                        
+	                        $(tr).append($(id));
+	                        $(tr).append($(nome));
+	                        $(tr).append($(hInicio));
+	                        $(tr).append($(hFim));
+	                        $(tr).append($(dInicio));
+	                        $(tr).append($(dFim));
+	                        
+	                        $("#tbGrupo > tbody").append($(tr));
+	                        
+	                    });
+	                    sbAtivarBotoes(false);
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+	        }
+			
+			$(document).ready(function () {
+	            sbCarregarGrid();
+			});
+			
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<br />
+			<br />
+  			<h1>Grupos</h1>
+  			<br />
+  			<div class="table-size">
+	  			<table id="tbGrupo" class="table table-striped table-bordered table-condensed">
+	 				<thead> 
+	 					<tr> 
+	 						<th width="10%">Código</th>
+	 						<th width="30%">Nome</th> 
+	 						<th width="15%">Hora Início</th> 
+	 						<th width="15%">Hora Fim</th> 
+	 						<th width="15%">Data Início</th> 
+	 						<th width="15%">Data Fim</th> 
+	 					</tr>
+	 				</thead>
+	 				<tbody> 
+	 				</tbody>
+				</table>
+			</div>
+			<h3 class="mt-xlg">Cadastro de Grupos</h3>
+			<nav class="navbar navbar-default mt-md"> 
+				<div class="container-fluid pl-none pr-none pt-md pb-md">
+					<div class="collapse navbar-collapse"> 
+						<div class="row"> 
+							<div class="col-sm-4"> 
+								<label>Nome:</label>
+								<input id="txtNome" type="text" class="form-control" name="nome" /> 
+							</div> 
+							<div class="col-sm-2">
+								<label>Hora Início:</label>
+								<input id="txtHinicio" type="text" class="form-control" name="hInicio" />  
+							</div>
+							<div class="col-sm-2">
+								<label>Hora Fim:</label>
+								<input id="txtHfim" type="text" class="form-control" name="hFim" />  
+							</div>
+							<div class="col-sm-2">
+								<label>Data Início:</label>
+								<input id="txtDinicio" type="text" class="form-control" name="dInicio" />  
+							</div>
+							<div class="col-sm-2">
+								<label>Data Fim:</label>
+								<input id="txtDfim" type="text" class="form-control" name="dFim" />  
+							</div>
+							<div class="col-sm-12 text-right">
+								<br />
+								<button onclick="sbLimpar()" class="btn btn-sm btn-danger mt-sm"><i class="glyphicon glyphicon-remove mr-sm"></i>Cancelar</button> 
+								<button onclick="sbSalvar()" id="btnSalvar" class="btn btn-sm btn-primary mt-sm"><i class="glyphicon glyphicon-floppy-disk mr-sm"></i>Cadastrar</button> 
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<title>Cadastro de SmartPhone</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/bootstrap.js"></script>
+		<script type="text/javascript">
+		
+			function sbCarregarAlert(texto){
+				var div = $("<div class='alert alert-danger notificacao'>" + texto + "</div>");
+				$("body").prepend($(div));
+				window.setTimeout(function(){
+					$(div).remove();
+				}, 5000);
+			}
+		
+			function fnValidar(){
+				
+				var out = true;
+				var erro = "";
+				
+				if ($("#txtImei").val() == ""){
+					out = false;
+					erro += "O campo IMEI não pode ficar em Branco!<br />"
+				}		
+				if ($("#txtIccid").val() == ""){
+					out = false;
+					erro += "O campo ICCID não pode ficar em Branco!<br />"
+				}		
+				if ($("#ddlUsuario option:selected").val() == "-1"){
+					out = false;
+					erro += "O campo Usuário não pode ficar em Branco!<br />"
+				}			
+				if (!out){
+					sbCarregarAlert(erro);
+				}
+				return out;
+				
+			}
+		
+			function sbSalvar(){
+				
+				if ($("#txtImei").attr("disabled") == "disabled"){
+					sbAtivarBotoes(true);
+				} else {	
+					if (fnValidar()){
+						sbProcessar($("#txtImei").val(), $("#txtIccid").val(), parseInt($("#ddlUsuario option:selected").val()), $("#ddlUsuario option:selected").text());
+					}		
+				}
+				
+			}
+			
+			function sbAlterar(id){
+				$.ajax({
+	                type: "GET",
+	                url: "http://localhost:8080/smartphone/consultaID/" + id,
+	                dataType: "xml",
+	                success: function (xml) {
+	                    $(xml).find('Smartphone').each(function () {  
+	                                      	  
+	                        var imei = $(this).attr('imei');
+	                        var iccid = $(this).attr('iccid');
+	                        var usuarioId = $(this).attr('usuarioId');
+	                        var id = $(this).attr('id');
+	                        
+	                        $("#hdfId").val(id);
+	                        $("#txtImei").val(imei);
+	                        $("#txtIccid").val(iccid);
+	                        $("#ddlUsuario").val(usuarioId);
+	                        
+	                    });
+	                    sbAtivarBotoes(true);
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+			}
+		
+			function sbAtivarBotoes(flag){
+				if(!flag){
+					$("#txtImei").attr("disabled","disabled");
+					$("#txtIccid").attr("disabled","disabled");
+					$("#ddlUsuario").attr("disabled","disabled");
+					$("#btnSalvar").html("<i class='glyphicon glyphicon-floppy-disk mr-sm'></i>Cadastrar");
+				} else {
+					$("#txtImei").removeAttr("disabled");
+					$("#txtIccid").removeAttr("disabled");
+					$("#ddlUsuario").removeAttr("disabled");
+					$("#btnSalvar").html("<i class='glyphicon glyphicon-floppy-disk mr-sm'></i>Salvar");
+				}
+			}
+		
+			function sbLimpar(){
+				$("#txtImei").val("");
+				$("#txtIccid").val("");	
+				$("#ddlUsuario").val("-1");	
+				$("#hdfId").val("");	
+				sbAtivarBotoes(false);
+			}
+			
+			function sbDeletar(id){
+				$.ajax({
+	                type: "POST",
+	                contentType: "application/json; charset=utf-8",
+	                url: "http://localhost:8080/smartphone/deletar/" + id,
+	                dataType: "json",
+	                success: function () {
+	                    alert("Smartphone Deletado com Sucesso!");
+	                    sbLimpar();
+	                    sbCarregarGrid();
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+		     	});
+			}
+			
+			function sbProcessar(imei, iccid, usuarioId, usuarioNome){
+			
+				var id = $("#hdfId").val();
+				
+				if (id == ""){
+				
+					$.ajax({
+		                type: "POST",
+		                contentType: "application/json; charset=utf-8",
+		                url: "http://localhost:8080/smartphone/inserir/" + imei + "/" + iccid + "/" + usuarioId + "/" + usuarioNome,
+		                dataType: "json",
+		                success: function () {
+		                    alert("Smartphone Inserido com Sucesso!");
+		                    sbLimpar();
+		                    sbCarregarGrid();
+		                },
+		                error: function (response) {
+							alert("Erro!");
+					    }
+		            });
+				
+				} else {
+	            	
+	            	$.ajax({
+		                type: "POST",
+		                contentType: "application/json; charset=utf-8",
+		                url: "http://localhost:8080/smartphone/atualizar/" + id + "/" + imei + "/" + iccid + "/" + usuarioId,
+		                dataType: "json",
+		                success: function () {
+		                    alert("Smartphone Atualizado com Sucesso!");
+		                    sbLimpar();
+		                    sbCarregarGrid();
+		                },
+		                error: function (response) {
+							alert("Erro!");
+					    }
+		            });
+	            	
+	            }
+			}
+			
+			function onEdit(elem){
+            	var i = $(elem).parents("tr");
+    			var id = $(i).children("td").get(2);
+    			id = $(id).text();
+    			sbAlterar(parseInt(id));
+	        }
+	        
+	        function onRemove(elem){
+            	var i = $(elem).parents("tr");
+    			var id = $(i).children("td").get(2);
+    			id = $(id).text();
+    			sbDeletar(parseInt(id));
+	        }
+	        
+	        function sbCarregarCombo(){
+	        	$.ajax({
+	                type: "GET",
+	                url: "http://localhost:8080/usuario/consulta/",
+	                dataType: "xml",
+	                success: function (xml) {
+	                
+	                    $(xml).find('Usuario').each(function () {  
+	                                      	  
+	                        var option = $("<option value='" + $(this).attr('id') + "'>" + $(this).attr('nome') + "</option>");            
+	                        $("#ddlUsuario").append($(option));
+	                        
+	                    });
+	                    sbAtivarBotoes(false);
+	                    
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+	        }
+	        
+	        function sbCarregarGrid(){
+	        	$.ajax({
+	                type: "GET",
+	                url: "http://localhost:8080/smartphone/consulta/",
+	                dataType: "xml",
+	                success: function (xml) {
+	                
+	                	$("#tbSmartphone > tbody").empty();
+	                
+	                    $(xml).find('Smartphone').each(function () {  
+	                                      	
+	                        var edit = $("<td><div class='btn-group btn-group-xs'><a class='btn btn-xs btn-primary' onclick='onEdit(this)' href='#'><i class='glyphicon glyphicon-pencil'><i></a></div></td>");              	
+	                        var remove = $("<td><div class='btn-group btn-group-xs'><a class='btn btn-xs btn-danger' onclick='onRemove(this)' href='#'><i class='glyphicon glyphicon-remove'><i></a></div></td>");  
+	                        var id = $("<td>" + $(this).attr('id') + "</td>");
+	                        var nome = $("<td>" + $(this).attr('nome') + "</td>");
+	                        var imei = $("<td>" + $(this).attr('imei') + "</td>");
+	                        var iccid = $("<td>" + $(this).attr('iccid') + "</td>");
+	                        var tr = $("<tr></tr");
+	                        
+	                        $(tr).append($(edit));
+	                        $(tr).append($(remove));
+	                        $(tr).append($(id));
+	                        $(tr).append($(nome));
+	                        $(tr).append($(imei));
+	                        $(tr).append($(iccid));
+	                        
+	                        $("#tbSmartphone > tbody").append($(tr));
+	                        
+	                    });
+	                    sbAtivarBotoes(false);
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+	        }
+			
+			$(document).ready(function () {
+	            sbCarregarGrid();
+	            sbCarregarCombo();
+			});
+			
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<br />
+			<br />
+  			<h1>SmartPhones</h1>
+  			<br />
+  			<div class="table-size">
+	  			<table id="tbSmartphone" class="table table-striped table-bordered table-condensed">
+	 				<thead> 
+	 					<tr> 
+	 						<th width="1%"></th>
+	 						<th width="1%"></th>
+	 						<th width="9%">Código</th> 
+	 						<th width="30%">Responsável</th> 
+	 						<th width="30%">IMEI</th> 
+	 						<th width="29%">ICCID</th>
+	 					</tr>
+	 				</thead>
+	 				<tbody> 
+	 				</tbody>
+				</table>
+			</div>
+			<h3 class="mt-xlg">Cadastro de SmartPhones</h3>
+			<nav class="navbar navbar-default mt-md"> 
+				<div class="container-fluid pl-none pr-none pt-md pb-md">
+					<div class="collapse navbar-collapse"> 
+						<div class="row"> 
+							<div class="col-sm-4"> 
+								<label>IMEI:</label>
+								<input id="txtImei" type="text" class="form-control" name="imei" /> 
+							</div> 
+							<div class="col-sm-4">
+								<label>ICCID:</label>
+								<input id="txtIccid" type="text" class="form-control" name="iccid" /> 
+								<input id="hdfId" type="hidden" class="form-control" name="id" /> 
+							</div>
+							<div class="col-sm-4">
+								<label>Usuário:</label>
+								<select id="ddlUsuario" class="form-control">
+									<option value="-1">Selecione</option>
+								</select>
+							</div>
+							<div class="col-sm-12 text-right">
+								<br />
+								<button onclick="sbLimpar()" class="btn btn-sm btn-danger mt-sm"><i class="glyphicon glyphicon-remove mr-sm"></i>Cancelar</button> 
+								<button onclick="sbSalvar()" id="btnSalvar" class="btn btn-sm btn-primary mt-sm"><i class="glyphicon glyphicon-floppy-disk mr-sm"></i>Cadastrar</button> 
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</body>
+</html>

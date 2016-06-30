@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<title>Cadastro de Dispositivo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/bootstrap.js"></script>
+		<script type="text/javascript">
+		
+			function sbCarregarAlert(texto){
+				var div = $("<div class='alert alert-danger notificacao'>" + texto + "</div>");
+				$("body").prepend($(div));
+				window.setTimeout(function(){
+					$(div).remove();
+				}, 5000);
+			}
+		
+			function fnValidar(){
+				
+				var out = true;
+				var erro = "";
+				
+				if ($("#txtNome").val() == ""){
+					out = false;
+					erro += "O campo Nome não pode ficar em Branco!<br />"
+				}		
+				if ($("#txtMac").val() == ""){
+					out = false;
+					erro += "O campo MAC não pode ficar em Branco!<br />"
+				}		
+				if ($("#ddlGrupo option:selected").val() == "-1"){
+					out = false;
+					erro += "O campo Grupo não pode ficar em Branco!<br />"
+				}			
+				if (!out){
+					sbCarregarAlert(erro);
+				}
+				return out;
+				
+			}
+		
+			function sbSalvar(){
+				
+				if ($("#txtNome").attr("disabled") == "disabled"){
+					sbAtivarBotoes(true);
+				} else {	
+					if (fnValidar()){
+						sbProcessar($("#txtNome").val(), $("#txtMac").val(), parseInt($("#ddlGrupo option:selected").val()));
+					}		
+				}
+				
+			}
+		
+			function sbAtivarBotoes(flag){
+				if(!flag){
+					$("#txtNome").attr("disabled","disabled");
+					$("#txtMac").attr("disabled","disabled");
+					$("#ddlGrupo").attr("disabled","disabled");
+					$("#btnSalvar").html("<i class='glyphicon glyphicon-floppy-disk mr-sm'></i>Cadastrar");
+				} else {
+					$("#txtNome").removeAttr("disabled");
+					$("#txtMac").removeAttr("disabled");
+					$("#ddlGrupo").removeAttr("disabled");
+					$("#btnSalvar").html("<i class='glyphicon glyphicon-floppy-disk mr-sm'></i>Salvar");
+				}
+			}
+		
+			function sbLimpar(){
+				$("#txtNome").val("");
+				$("#txtMac").val("");	
+				$("#ddlGrupo").val("-1");	
+				sbAtivarBotoes(false);
+			}
+			
+			function sbProcessar(nome, mac, grupoId){
+			
+				$.ajax({
+	                type: "POST",
+	                contentType: "application/json; charset=utf-8",
+	                url: "http://localhost:8080/dispositivo/inserir/" + nome + "/" + mac + "/" + grupoId,
+	                dataType: "json",
+	                success: function () {
+	                    alert("Dispositivo Inserido com Sucesso!");
+	                    sbLimpar();
+	                    sbCarregarGrid();
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+		            
+			}
+	        
+	        function sbCarregarCombo(){
+	        	$.ajax({
+	                type: "GET",
+	                url: "http://localhost:8080/grupo/consulta/",
+	                dataType: "xml",
+	                success: function (xml) {
+	                
+	                    $(xml).find('Grupo').each(function () {  
+	                                      	  
+	                        var option = $("<option value='" + $(this).attr('id') + "'>" + $(this).attr('nome') + "</option>");            
+	                        $("#ddlGrupo").append($(option));
+	                        
+	                    });
+	                    sbAtivarBotoes(false);
+	                    
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+	        }
+	        
+	        function sbCarregarGrid(){
+	        	$.ajax({
+	                type: "GET",
+	                url: "http://localhost:8080/dispositivo/consulta/",
+	                dataType: "xml",
+	                success: function (xml) {
+	                
+	                	$("#tbDispositivo > tbody").empty();
+	                
+	                    $(xml).find('Dispositivo').each(function () {  
+	                                      	  
+	                        var nome = $("<td>" + $(this).attr('nome') + "</td>");
+	                        var mac = $("<td>" + $(this).attr('mac') + "</td>");
+	                        var tr = $("<tr></tr");
+	                        
+	                        $(tr).append($(nome));
+	                        $(tr).append($(mac));
+	                        
+	                        $("#tbDispositivo > tbody").append($(tr));
+	                        
+	                    });
+	                    sbAtivarBotoes(false);
+	                },
+	                error: function (response) {
+						alert("Erro!");
+				    }
+	            });
+	        }
+			
+			$(document).ready(function () {
+	            sbCarregarGrid();
+	            sbCarregarCombo();
+			});
+			
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<br />
+			<br />
+  			<h1>Dispositivos</h1>
+  			<br />
+  			<div class="table-size">
+	  			<table id="tbDispositivo" class="table table-striped table-bordered table-condensed">
+	 				<thead> 
+	 					<tr> 
+	 						<th width="50%">Nome</th> 
+	 						<th width="50%">Mac Address</th> 
+	 					</tr>
+	 				</thead>
+	 				<tbody> 
+	 				</tbody>
+				</table>
+			</div>
+			<h3 class="mt-xlg">Cadastro de Dispositivos</h3>
+			<nav class="navbar navbar-default mt-md"> 
+				<div class="container-fluid pl-none pr-none pt-md pb-md">
+					<div class="collapse navbar-collapse"> 
+						<div class="row"> 
+							<div class="col-sm-4"> 
+								<label>Nome:</label>
+								<input id="txtNome" type="text" class="form-control" name="nome" /> 
+							</div> 
+							<div class="col-sm-4">
+								<label>Mac Address:</label>
+								<input id="txtMac" type="text" class="form-control" name="mac" />  
+							</div>
+							<div class="col-sm-4">
+								<label>Grupo:</label>
+								<select id="ddlGrupo" class="form-control">
+									<option value="-1">Selecione</option>
+								</select>
+							</div>
+							<div class="col-sm-12 text-right">
+								<br />
+								<button onclick="sbLimpar()" class="btn btn-sm btn-danger mt-sm"><i class="glyphicon glyphicon-remove mr-sm"></i>Cancelar</button> 
+								<button onclick="sbSalvar()" id="btnSalvar" class="btn btn-sm btn-primary mt-sm"><i class="glyphicon glyphicon-floppy-disk mr-sm"></i>Cadastrar</button> 
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</body>
+</html>
